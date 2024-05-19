@@ -902,6 +902,7 @@ return lex.next_token();
     Lexer lex;
     
     HashMap<String, ArrayList<String>> TablaSimbolos = new HashMap<String, ArrayList<String>>();
+    HashMap<String, Integer> cantidadParametros = new HashMap<>();
     String currentHash;
     String globalHash = "globalTS";
     boolean flagMain = false;
@@ -997,7 +998,6 @@ return lex.next_token();
     }
 
     public boolean validarUsoVariable(String id) {
-        // Verificar en el alcance local
         if (TablaSimbolos.containsKey(currentHash)) {
             for (String elemento : TablaSimbolos.get(currentHash)) {
                 String[] partes = elemento.split(":");
@@ -1006,7 +1006,7 @@ return lex.next_token();
                 }
             }
         }
-        // Verificar en el alcance global
+
         if (TablaSimbolos.containsKey(globalHash)) {
             for (String elemento : TablaSimbolos.get(globalHash)) {
                 String[] partes = elemento.split(":");
@@ -1019,7 +1019,6 @@ return lex.next_token();
     }
 
     public boolean validarFuncionExistente(String functionName) {
-        // Verificar si la función existe en la tabla de símbolos
         return TablaSimbolos.containsKey(functionName);
     }
    
@@ -1067,6 +1066,7 @@ return lex.next_token();
     public String getTipoFunc(String id) {
         // Verificar en el alcance local
         ArrayList<String> informacion = TablaSimbolos.get(id);
+        //System.out.println(id);
         // Iterar sobre la lista de información
         for (String info : informacion) {
             // Imprimir la información
@@ -1080,6 +1080,13 @@ return lex.next_token();
     public void toStringCod3D() {
         // Verificar si la función existe en la tabla de símbolos
         System.out.println(cod3D.toString());
+    }
+
+    public int contarParametrosInvocados(String params) {
+        if (params.isEmpty()) {
+            return 0;
+        }
+        return params.split(",").length;
     }
 
 
@@ -1688,7 +1695,7 @@ class CUP$Parser$actions {
                                                                         cod3D.append("\n" + miTempId + "=" + i.toString());
                                                                         RESULT = tipo +  ":" + miTempId;
                                                                     }
-                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null"; } 
+                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null:null"; } 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FACTOR",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1712,7 +1719,7 @@ class CUP$Parser$actions {
                                                                                 cod3D.append("\n" + miTempId3 + "=" + miTempId1 + "-" + miTempId2);
                                                                                 RESULT = tipo +  ":" + miTempId3;
                                                                            }
-                                                                           else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null";} 
+                                                                           else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null:null";} 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FACTOR",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1737,7 +1744,7 @@ class CUP$Parser$actions {
                                                                             cod3D.append("\n" + miTempId3 + "=" + miTempId1 + "+" + miTempId2);
                                                                             RESULT = tipo +  ":" + miTempId3;
                                                                          }
-                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null";} 
+                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null:null";} 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FACTOR",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2466,10 +2473,20 @@ class CUP$Parser$actions {
 		int IDleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)).left;
 		int IDright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)).right;
 		Object ID = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-4)).value;
-		 if(validarScopeVariablesGlobales(ID.toString())) {  
-                                                                                            TablaSimbolos.get(currentHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
-                                                                                            cod3D.append("\nglobal_data_array" + tglob.toString() + " " + ID.toString());
-                                                                                            } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} 
+		 
+                                                                                        if(validarScopeVariablesGlobales(ID.toString())) {
+                                                                                            if (tglob.toString().equals("int") || tglob.toString().equals("char")){
+                                                                                                TablaSimbolos.get(globalHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
+                                                                                                cod3D.append("\nglobal_data_array" + tglob.toString() + " " + ID.toString());
+                                                                                            }  
+                                                                                            else {
+                                                                                                System.out.println("Parser: Err : El array solo permite ser de tipo int o char");
+                                                                                            }
+                                                                                        } 
+                                                                                        else {
+                                                                                            System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());
+                                                                                        } 
+                                                                                    
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECL",24, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-8)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2484,9 +2501,20 @@ class CUP$Parser$actions {
 		int IDleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-6)).left;
 		int IDright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-6)).right;
 		Object ID = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-6)).value;
-		 if(validarScopeVariablesGlobales(ID.toString())) {  
-                                                                                            TablaSimbolos.get(currentHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
-                                                                                            } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} 
+		 
+                                                                                        if(validarScopeVariablesGlobales(ID.toString())) {
+                                                                                            if (tglob.toString().equals("int") || tglob.toString().equals("char")){
+                                                                                                TablaSimbolos.get(globalHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
+                                                                                                cod3D.append("\nglobal_data_array" + tglob.toString() + " " + ID.toString());
+                                                                                            }  
+                                                                                            else {
+                                                                                                System.out.println("Parser: Err : El array solo permite ser de tipo int o char");
+                                                                                            }
+                                                                                        } 
+                                                                                        else {
+                                                                                            System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());
+                                                                                        } 
+                                                                                    
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECL",24, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-10)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2553,12 +2581,20 @@ class CUP$Parser$actions {
 		int IDleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)).left;
 		int IDright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)).right;
 		Object ID = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-4)).value;
-		
-                                                                                            if(validarScopeVariables(ID.toString())){ 
-                                                                                                TablaSimbolos.get(currentHash).add("array: " + ID.toString() + ":" + tloc.toString());
-                                                                                                cod3D.append("\nlocal_data_array" + tloc.toString() + " " + ID.toString());
-                                                                                            } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString());}
-                                                                                            
+		 
+                                                                                    if(validarScopeVariablesGlobales(ID.toString())) {
+                                                                                        if (tloc.toString().equals("int") || tloc.toString().equals("char")){
+                                                                                            TablaSimbolos.get(currentHash).add("GlobArray: " + ID.toString() + ":" + tloc.toString());
+                                                                                            cod3D.append("\nlocal_data_array" + tloc.toString() + " " + ID.toString());
+                                                                                        }  
+                                                                                        else {
+                                                                                            System.out.println("Parser: Err : El array solo permite ser de tipo int o char");
+                                                                                        }
+                                                                                    } 
+                                                                                    else {
+                                                                                        System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());
+                                                                                    } 
+                                                                                
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECLOC",25, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-8)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2576,14 +2612,20 @@ class CUP$Parser$actions {
 		int vlleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).left;
 		int vlright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).right;
 		String vl = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
-		
-                                                                                                        String[] info = vl.toString().split(":");
-                                                                                                        if(validarScopeVariables(ID.toString())){
-                                                                                                            if (info[0].equals(tloc.toString())) {TablaSimbolos.get(currentHash).add("array: " + ID.toString() + ":" + tloc.toString());}
-                                                                                                            else { System.out.println("Parser: Err: Los elementos no son del mismo tipo que el array declarado: " +  ID.toString());} 
-                                                                                                            
-                                                                                                        } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString());}
-                                                                                                        
+		 
+                                                                                    if(validarScopeVariablesGlobales(ID.toString())) {
+                                                                                        if (tloc.toString().equals("int") || tloc.toString().equals("char")){
+                                                                                            TablaSimbolos.get(currentHash).add("GlobArray: " + ID.toString() + ":" + tloc.toString());
+                                                                                            cod3D.append("\nlocal_data_array" + tloc.toString() + " " + ID.toString());
+                                                                                        }  
+                                                                                        else {
+                                                                                            System.out.println("Parser: Err : El array solo permite ser de tipo int o char");
+                                                                                        }
+                                                                                    } 
+                                                                                    else {
+                                                                                        System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());
+                                                                                    } 
+                                                                                
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECLOC",25, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-12)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2797,8 +2839,12 @@ class CUP$Parser$actions {
 		int fsleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)).left;
 		int fsright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)).right;
 		String fs = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-3)).value;
-		 String name = fs; int cant = contarParametros(fs); 
+		 
+                                                            String name = fs; 
+                                                            int cant = contarParametros(fs); 
                                                             currentTemp = 1; 
+                                                            cantidadParametros.put(name, cant);
+                                                        
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FUNC_STAT_DEF",40, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2812,9 +2858,11 @@ class CUP$Parser$actions {
 		Object ID = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
 		 
                                             RESULT = ID.toString()  + ":" + getTipoFunc(ID.toString());
-                                            //System.out.println(RESULT);
                                             if (validarFuncionExistente(ID.toString())) {
-
+                                                int parametrosEsperados = cantidadParametros.getOrDefault(ID.toString(), -1);
+                                                if (parametrosEsperados != 0) {
+                                                    System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros.");
+                                                }
                                             } else {
                                                 System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida.");
                                             }
@@ -2830,11 +2878,21 @@ class CUP$Parser$actions {
 		int IDleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)).left;
 		int IDright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)).right;
 		Object ID = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-3)).value;
+		int cparamleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).left;
+		int cparamright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).right;
+		String cparam = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		 
                                                 RESULT = ID.toString()  + ":" + getTipoFunc(ID.toString());
-                                                //System.out.println(RESULT);
                                                 if (validarFuncionExistente(ID.toString())) {
-
+                                                    int parametrosEsperados = cantidadParametros.getOrDefault(ID.toString(), -1);
+                                                    if (cparam != null) {
+                                                        int parametrosRecibidos = contarParametrosInvocados(cparam);
+                                                        if (parametrosEsperados != parametrosRecibidos) {
+                                                            System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros, pero se pasaron " + parametrosRecibidos + ".");
+                                                        }
+                                                    } else {
+                                                        System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros, pero no se pasaron.");
+                                                    }
                                                 } else {
                                                     System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida.");
                                                 }
@@ -3016,7 +3074,16 @@ class CUP$Parser$actions {
           case 126: // FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER PARENTC UNDERS LINE UNDERS 
             {
               String RESULT =null;
-
+		int expi1left = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)).left;
+		int expi1right = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)).right;
+		String expi1 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-4)).value;
+		 
+                                                                                                            if (expi1 != null && !expi1.toString().equals("int")) {
+                                                                                                                System.out.println("Parser: Err: El valor en RANGE debe ser de tipo entero: " + expi1.toString());
+                                                                                                            } else if (expi1 == null) {
+                                                                                                                System.out.println("Parser: Err: El valor en RANGE no puede ser nulo.");
+                                                                                                            }
+                                                                                                        
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FOR_STATEMENT",12, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-12)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -3025,7 +3092,24 @@ class CUP$Parser$actions {
           case 127: // FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER COMA EXP_ARIT_INTEGER PARENTC UNDERS LINE UNDERS 
             {
               String RESULT =null;
-
+		int expi1left = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-6)).left;
+		int expi1right = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-6)).right;
+		String expi1 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-6)).value;
+		int expi2left = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)).left;
+		int expi2right = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)).right;
+		String expi2 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-4)).value;
+		
+                                                                                                                if (expi1 != null && !expi1.toString().equals("int")) {
+                                                                                                                    System.out.println("Parser: Err: El primer valor en RANGE debe ser de tipo entero: " + expi1.toString());
+                                                                                                                } else if (expi1 == null) {
+                                                                                                                    System.out.println("Parser: Err: El primer valor en RANGE no puede ser nulo.");
+                                                                                                                }
+                                                                                                                if (expi2 != null && !expi2.toString().equals("int")) {
+                                                                                                                    System.out.println("Parser: Err: El segundo valor en RANGE debe ser de tipo entero: " + expi2.toString());
+                                                                                                                } else if (expi2 == null) {
+                                                                                                                    System.out.println("Parser: Err: El segundo valor en RANGE no puede ser nulo.");
+                                                                                                                }
+                                                                                                            
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FOR_STATEMENT",12, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-14)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -3034,7 +3118,32 @@ class CUP$Parser$actions {
           case 128: // FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER COMA EXP_ARIT_INTEGER COMA EXP_ARIT_INTEGER PARENTC UNDERS LINE UNDERS 
             {
               String RESULT =null;
-
+		int expi1left = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-8)).left;
+		int expi1right = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-8)).right;
+		String expi1 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-8)).value;
+		int expi2left = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-6)).left;
+		int expi2right = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-6)).right;
+		String expi2 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-6)).value;
+		int expi3left = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)).left;
+		int expi3right = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)).right;
+		String expi3 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-4)).value;
+		
+                                                                                                                if (expi1 != null && !expi1.toString().equals("int")) {
+                                                                                                                    System.out.println("Parser: Err: El primer valor en RANGE debe ser de tipo entero: " + expi1.toString());
+                                                                                                                } else if (expi1 == null) {
+                                                                                                                    System.out.println("Parser: Err: El primer valor en RANGE no puede ser nulo.");
+                                                                                                                }
+                                                                                                                if (expi2 != null && !expi2.toString().equals("int")) {
+                                                                                                                    System.out.println("Parser: Err: El segundo valor en RANGE debe ser de tipo entero: " + expi2.toString());
+                                                                                                                } else if (expi2 == null) {
+                                                                                                                    System.out.println("Parser: Err: El segundo valor en RANGE no puede ser nulo.");
+                                                                                                                }
+                                                                                                                if (expi3 != null && !expi3.toString().equals("int")) {
+                                                                                                                    System.out.println("Parser: Err: El tercer valor en RANGE debe ser de tipo entero: " + expi3.toString());
+                                                                                                                } else if (expi3 == null) {
+                                                                                                                    System.out.println("Parser: Err: El tercer valor en RANGE no puede ser nulo.");
+                                                                                                                }
+                                                                                                            
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FOR_STATEMENT",12, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-16)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

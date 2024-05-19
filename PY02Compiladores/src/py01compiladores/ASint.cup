@@ -17,6 +17,7 @@ parser code {:
     Lexer lex;
     
     HashMap<String, ArrayList<String>> TablaSimbolos = new HashMap<String, ArrayList<String>>();
+    HashMap<String, Integer> cantidadParametros = new HashMap<>();
     String currentHash;
     String globalHash = "globalTS";
     boolean flagMain = false;
@@ -112,7 +113,6 @@ parser code {:
     }
 
     public boolean validarUsoVariable(String id) {
-        // Verificar en el alcance local
         if (TablaSimbolos.containsKey(currentHash)) {
             for (String elemento : TablaSimbolos.get(currentHash)) {
                 String[] partes = elemento.split(":");
@@ -121,7 +121,7 @@ parser code {:
                 }
             }
         }
-        // Verificar en el alcance global
+
         if (TablaSimbolos.containsKey(globalHash)) {
             for (String elemento : TablaSimbolos.get(globalHash)) {
                 String[] partes = elemento.split(":");
@@ -134,7 +134,6 @@ parser code {:
     }
 
     public boolean validarFuncionExistente(String functionName) {
-        // Verificar si la función existe en la tabla de símbolos
         return TablaSimbolos.containsKey(functionName);
     }
    
@@ -182,6 +181,7 @@ parser code {:
     public String getTipoFunc(String id) {
         // Verificar en el alcance local
         ArrayList<String> informacion = TablaSimbolos.get(id);
+        //System.out.println(id);
         // Iterar sobre la lista de información
         for (String info : informacion) {
             // Imprimir la información
@@ -195,6 +195,13 @@ parser code {:
     public void toStringCod3D() {
         // Verificar si la función existe en la tabla de símbolos
         System.out.println(cod3D.toString());
+    }
+
+    public int contarParametrosInvocados(String params) {
+        if (params.isEmpty()) {
+            return 0;
+        }
+        return params.split(",").length;
     }
 
 
@@ -694,14 +701,37 @@ DECL::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID EQ VALUE:v ENDLINE {:String[] inf
 
                                                                      } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} :};
 
-DECL ::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC ENDLINE {: if(validarScopeVariablesGlobales(ID.toString())) {  
-                                                                                            TablaSimbolos.get(currentHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
-                                                                                            cod3D.append("\nglobal_data_array" + tglob.toString() + " " + ID.toString());
-                                                                                            } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} :};
+DECL ::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC ENDLINE 
+                                                                                    {: 
+                                                                                        if(validarScopeVariablesGlobales(ID.toString())) {
+                                                                                            if (tglob.toString().equals("int") || tglob.toString().equals("char")){
+                                                                                                TablaSimbolos.get(globalHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
+                                                                                                cod3D.append("\nglobal_data_array" + tglob.toString() + " " + ID.toString());
+                                                                                            }  
+                                                                                            else {
+                                                                                                System.out.println("Parser: Err : El array solo permite ser de tipo int o char");
+                                                                                            }
+                                                                                        } 
+                                                                                        else {
+                                                                                            System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());
+                                                                                        } 
+                                                                                    :};
 
-DECL ::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC EQ VALUE_LIST ENDLINE  {: if(validarScopeVariablesGlobales(ID.toString())) {  
-                                                                                            TablaSimbolos.get(currentHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
-                                                                                            } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} :};
+DECL ::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC EQ VALUE_LIST ENDLINE  
+                                                                                    {: 
+                                                                                        if(validarScopeVariablesGlobales(ID.toString())) {
+                                                                                            if (tglob.toString().equals("int") || tglob.toString().equals("char")){
+                                                                                                TablaSimbolos.get(globalHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
+                                                                                                cod3D.append("\nglobal_data_array" + tglob.toString() + " " + ID.toString());
+                                                                                            }  
+                                                                                            else {
+                                                                                                System.out.println("Parser: Err : El array solo permite ser de tipo int o char");
+                                                                                            }
+                                                                                        } 
+                                                                                        else {
+                                                                                            System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());
+                                                                                        } 
+                                                                                    :};
 
 DECLOC::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID ENDLINE {:
                                                           if(validarScopeVariables(ID.toString())){
@@ -726,21 +756,37 @@ DECLOC::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID EQ VALUE:v ENDLINE {:
                                                                    } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString());}
                                                                    :};
                                                                     
-DECLOC ::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC ENDLINE {:
-                                                                                            if(validarScopeVariables(ID.toString())){ 
-                                                                                                TablaSimbolos.get(currentHash).add("array: " + ID.toString() + ":" + tloc.toString());
-                                                                                                cod3D.append("\nlocal_data_array" + tloc.toString() + " " + ID.toString());
-                                                                                            } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString());}
-                                                                                            :};
+DECLOC ::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC ENDLINE 
+                                                                                {: 
+                                                                                    if(validarScopeVariablesGlobales(ID.toString())) {
+                                                                                        if (tloc.toString().equals("int") || tloc.toString().equals("char")){
+                                                                                            TablaSimbolos.get(currentHash).add("GlobArray: " + ID.toString() + ":" + tloc.toString());
+                                                                                            cod3D.append("\nlocal_data_array" + tloc.toString() + " " + ID.toString());
+                                                                                        }  
+                                                                                        else {
+                                                                                            System.out.println("Parser: Err : El array solo permite ser de tipo int o char");
+                                                                                        }
+                                                                                    } 
+                                                                                    else {
+                                                                                        System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());
+                                                                                    } 
+                                                                                :};
 
-DECLOC ::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC EQ  PARENTCA VALUE_LIST:vl PARENTCC ENDLINE  {:
-                                                                                                        String[] info = vl.toString().split(":");
-                                                                                                        if(validarScopeVariables(ID.toString())){
-                                                                                                            if (info[0].equals(tloc.toString())) {TablaSimbolos.get(currentHash).add("array: " + ID.toString() + ":" + tloc.toString());}
-                                                                                                            else { System.out.println("Parser: Err: Los elementos no son del mismo tipo que el array declarado: " +  ID.toString());} 
-                                                                                                            
-                                                                                                        } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString());}
-                                                                                                        :};
+DECLOC ::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC EQ  PARENTCA VALUE_LIST:vl PARENTCC ENDLINE 
+                                                                                {: 
+                                                                                    if(validarScopeVariablesGlobales(ID.toString())) {
+                                                                                        if (tloc.toString().equals("int") || tloc.toString().equals("char")){
+                                                                                            TablaSimbolos.get(currentHash).add("GlobArray: " + ID.toString() + ":" + tloc.toString());
+                                                                                            cod3D.append("\nlocal_data_array" + tloc.toString() + " " + ID.toString());
+                                                                                        }  
+                                                                                        else {
+                                                                                            System.out.println("Parser: Err : El array solo permite ser de tipo int o char");
+                                                                                        }
+                                                                                    } 
+                                                                                    else {
+                                                                                        System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());
+                                                                                    } 
+                                                                                :};
 
 TYPES::= CHAR {: RESULT = "char"; :} 
         | FLOAT {: RESULT = "float"; :}
@@ -847,28 +893,43 @@ FUNCTION_STATEMENT::= FUNC SEP STRINGC SEP IDENTIFIER:ID
                                                             System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString());
                                                         }
                                                     :};
-FUNC_STAT_DEF ::= FUNCTION_STATEMENT:fs UNDERS LINE UNDERS {: String name = fs; int cant = contarParametros(fs); 
-                                                            currentTemp = 1; :};
+
+FUNC_STAT_DEF ::= FUNCTION_STATEMENT:fs UNDERS LINE UNDERS 
+                                                        {: 
+                                                            String name = fs; 
+                                                            int cant = contarParametros(fs); 
+                                                            currentTemp = 1; 
+                                                            cantidadParametros.put(name, cant);
+                                                        :};
 
 
 
 INV_FUNC ::= IDENTIFIER:ID PARENTA PARENTC
                                         {: 
                                             RESULT = ID.toString()  + ":" + getTipoFunc(ID.toString());
-                                            //System.out.println(RESULT);
                                             if (validarFuncionExistente(ID.toString())) {
-
+                                                int parametrosEsperados = cantidadParametros.getOrDefault(ID.toString(), -1);
+                                                if (parametrosEsperados != 0) {
+                                                    System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros.");
+                                                }
                                             } else {
                                                 System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida.");
                                             }
                                         :};
 
-INV_FUNC ::= IDENTIFIER:ID PARENTA PARAMS PARENTC
+INV_FUNC ::= IDENTIFIER:ID PARENTA PARAMS:cparam PARENTC
                                             {: 
                                                 RESULT = ID.toString()  + ":" + getTipoFunc(ID.toString());
-                                                //System.out.println(RESULT);
                                                 if (validarFuncionExistente(ID.toString())) {
-
+                                                    int parametrosEsperados = cantidadParametros.getOrDefault(ID.toString(), -1);
+                                                    if (cparam != null) {
+                                                        int parametrosRecibidos = contarParametrosInvocados(cparam);
+                                                        if (parametrosEsperados != parametrosRecibidos) {
+                                                            System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros, pero se pasaron " + parametrosRecibidos + ".");
+                                                        }
+                                                    } else {
+                                                        System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros, pero no se pasaron.");
+                                                    }
                                                 } else {
                                                     System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida.");
                                                 }
@@ -912,9 +973,47 @@ ELSE_STATEMENT ::= ELSE UNDERS LINE UNDERS | ;
 
 WHILE_STATEMENT ::= WHILE PARENTA EXP_REL_LOG PARENTC UNDERS LINE UNDERS;
 
-FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER PARENTC UNDERS LINE UNDERS;
-FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER COMA EXP_ARIT_INTEGER PARENTC UNDERS LINE UNDERS;
-FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER COMA EXP_ARIT_INTEGER COMA EXP_ARIT_INTEGER PARENTC UNDERS LINE UNDERS;
+FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER:expi1 PARENTC UNDERS LINE UNDERS
+                                                                                                        {: 
+                                                                                                            if (expi1 != null && !expi1.toString().equals("int")) {
+                                                                                                                System.out.println("Parser: Err: El valor en RANGE debe ser de tipo entero: " + expi1.toString());
+                                                                                                            } else if (expi1 == null) {
+                                                                                                                System.out.println("Parser: Err: El valor en RANGE no puede ser nulo.");
+                                                                                                            }
+                                                                                                        :};
+
+FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER:expi1 COMA EXP_ARIT_INTEGER:expi2 PARENTC UNDERS LINE UNDERS
+                                                                                                            {:
+                                                                                                                if (expi1 != null && !expi1.toString().equals("int")) {
+                                                                                                                    System.out.println("Parser: Err: El primer valor en RANGE debe ser de tipo entero: " + expi1.toString());
+                                                                                                                } else if (expi1 == null) {
+                                                                                                                    System.out.println("Parser: Err: El primer valor en RANGE no puede ser nulo.");
+                                                                                                                }
+                                                                                                                if (expi2 != null && !expi2.toString().equals("int")) {
+                                                                                                                    System.out.println("Parser: Err: El segundo valor en RANGE debe ser de tipo entero: " + expi2.toString());
+                                                                                                                } else if (expi2 == null) {
+                                                                                                                    System.out.println("Parser: Err: El segundo valor en RANGE no puede ser nulo.");
+                                                                                                                }
+                                                                                                            :};
+
+FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER:expi1 COMA EXP_ARIT_INTEGER:expi2 COMA EXP_ARIT_INTEGER:expi3 PARENTC UNDERS LINE UNDERS
+                                                                                                            {:
+                                                                                                                if (expi1 != null && !expi1.toString().equals("int")) {
+                                                                                                                    System.out.println("Parser: Err: El primer valor en RANGE debe ser de tipo entero: " + expi1.toString());
+                                                                                                                } else if (expi1 == null) {
+                                                                                                                    System.out.println("Parser: Err: El primer valor en RANGE no puede ser nulo.");
+                                                                                                                }
+                                                                                                                if (expi2 != null && !expi2.toString().equals("int")) {
+                                                                                                                    System.out.println("Parser: Err: El segundo valor en RANGE debe ser de tipo entero: " + expi2.toString());
+                                                                                                                } else if (expi2 == null) {
+                                                                                                                    System.out.println("Parser: Err: El segundo valor en RANGE no puede ser nulo.");
+                                                                                                                }
+                                                                                                                if (expi3 != null && !expi3.toString().equals("int")) {
+                                                                                                                    System.out.println("Parser: Err: El tercer valor en RANGE debe ser de tipo entero: " + expi3.toString());
+                                                                                                                } else if (expi3 == null) {
+                                                                                                                    System.out.println("Parser: Err: El tercer valor en RANGE no puede ser nulo.");
+                                                                                                                }
+                                                                                                            :};
 
 SWITCH_STATEMENT ::= SWITCH PARENTA IDENTIFIER PARENTC UNDERS CASE_LIST UNDERS;
 
