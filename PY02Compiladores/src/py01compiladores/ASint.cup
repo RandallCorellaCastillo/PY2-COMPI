@@ -417,7 +417,7 @@ FACTOR  ::=  PARENTA EXP_ARIT:e PARENTC {:RESULT = e;:}
                                                                         cod3D.append("\n" + miTempId + "=" + i.toString());
                                                                         RESULT = tipo +  ":" + miTempId;
                                                                     }
-                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null"; } :}
+                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null:null"; } :}
 
             | IDENTIFIER:i MINUSM {: String tipo = getTipo(i.toString()); if(validarUsoVariable(i.toString())) {
                                                                                 String baseTemp = "t";
@@ -431,7 +431,7 @@ FACTOR  ::=  PARENTA EXP_ARIT:e PARENTC {:RESULT = e;:}
                                                                                 cod3D.append("\n" + miTempId3 + "=" + miTempId1 + "-" + miTempId2);
                                                                                 RESULT = tipo +  ":" + miTempId3;
                                                                            }
-                                                                           else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null";} :}
+                                                                           else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null:null";} :}
 
             | IDENTIFIER:i PLUSP {: String tipo = getTipo(i.toString()); if(validarUsoVariable(i.toString())) {
                                                                             
@@ -446,7 +446,7 @@ FACTOR  ::=  PARENTA EXP_ARIT:e PARENTC {:RESULT = e;:}
                                                                             cod3D.append("\n" + miTempId3 + "=" + miTempId1 + "+" + miTempId2);
                                                                             RESULT = tipo +  ":" + miTempId3;
                                                                          }
-                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null";} :}
+                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null:null";} :}
 
             | INV_FUNC:f {:
                            
