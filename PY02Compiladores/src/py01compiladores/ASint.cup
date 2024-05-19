@@ -1,0 +1,943 @@
+package py01compiladores;
+import java_cup.runtime.*;
+import java.util.HashMap; // import the HashMap class
+import java.util.List;
+import java.util.ArrayList;
+import java.io.IOException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+parser code {:
+    // Connect this parser to a scanner!
+    Lexer lex;
+    
+    HashMap<String, ArrayList<String>> TablaSimbolos = new HashMap<String, ArrayList<String>>();
+    String currentHash;
+    String globalHash = "globalTS";
+    boolean flagMain = false;
+
+    StringBuffer cod3D = new StringBuffer();
+    int currentTemp = 1;
+
+    @SuppressWarnings("deprecation")
+    public Parser(Lexer lex) {
+        this.lex = lex;
+        this.symbolFactory = new DefaultSymbolFactory();
+    }
+    
+    public void syntax_error(Symbol s) {
+        System.out.println("Error R de sintaxis: " +  s.value + " linea: " +  (s.left+1) +  " columna: " +  (s.right+1));
+    }
+    public void unrecovered_syntax_error(Symbol s) {
+        System.out.println("Error R de sintaxis: " +  s.value + " linea: " +  (s.left+1) +  " columna: " +  (s.right+1));
+    } 
+
+    
+    public void TablaSimbolosToString () throws Exception {
+        String text = "";
+        for (String key: TablaSimbolos.keySet()) {
+            text +=  "Tabla de simbolo : " + key;
+            text +=  " : valores: " ;
+            for (String item : TablaSimbolos.get(key)) {
+                text += item +  "\n"; 
+            }
+            text += "\n";
+        }
+        Path currentPath = Paths.get("");
+        Path absolutePath = currentPath.toAbsolutePath();
+        String currentDirectory = absolutePath.toString(); 
+        String path4 = currentDirectory + "\\src\\py01compiladores\\tablaSimbolos.txt";
+        //System.out.println(text);
+        saveTablaSimbolos(text, path4);
+    }
+
+    public boolean validarScopeVariables (String id) throws Exception {
+        ArrayList<String> ScopeVariable = TablaSimbolos.get(currentHash);
+        for (String elemento : ScopeVariable) {
+            String[] partes = elemento.split(":");
+            String idComp = partes[1].trim();
+            if(id.equals(idComp) ){ return false;}
+
+        }
+        return true;
+    }
+
+    public boolean validarScopeVariablesGlobales (String id) throws Exception {
+        ArrayList<String> ScopeVariableGlobales = TablaSimbolos.get(globalHash);
+        for (String elemento : ScopeVariableGlobales) {
+            String[] partes = elemento.split(":");
+            String idComp = partes[1].trim();
+            if(id.equals(idComp) ){ return false;}
+        }
+        return true;
+    } 
+
+    public String getTipo(String id) {
+        //prioridad al scope local
+        ArrayList<String> scope1 = TablaSimbolos.get(currentHash);
+        for (String elemento1 : scope1) {
+            String[] elementos = elemento1.split(":");
+            if (elementos[1].trim().equals(id)) {
+                return elementos[2];
+            }
+        }
+        //scope global
+        ArrayList<String> scope2 = TablaSimbolos.get(globalHash);
+        for (String elemento2 : scope2) {
+            String[] elementos = elemento2.split(":");
+            if (elementos[1].trim().equals(id)) {
+                return elementos[2];
+            }
+        }
+        return "null";
+    }
+
+    public boolean validarNombreFuncion(String functionName) {
+        for (String key : TablaSimbolos.keySet()) {
+            if (key.equals(functionName)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public boolean validarOperacionIntFloat(String tipo1, String tipo2) {
+        if(tipo1.equals(tipo2)) { return true;}
+        else {return false;}
+    }
+
+    public boolean validarUsoVariable(String id) {
+        // Verificar en el alcance local
+        if (TablaSimbolos.containsKey(currentHash)) {
+            for (String elemento : TablaSimbolos.get(currentHash)) {
+                String[] partes = elemento.split(":");
+                if (partes[1].trim().equals(id)) {
+                    return true;
+                }
+            }
+        }
+        // Verificar en el alcance global
+        if (TablaSimbolos.containsKey(globalHash)) {
+            for (String elemento : TablaSimbolos.get(globalHash)) {
+                String[] partes = elemento.split(":");
+                if (partes[1].trim().equals(id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean validarFuncionExistente(String functionName) {
+        // Verificar si la función existe en la tabla de símbolos
+        return TablaSimbolos.containsKey(functionName);
+    }
+   
+    public static void saveTablaSimbolos(String content, String ruta) throws IOException, Exception {
+        try {
+            FileWriter archivoEscritura = new FileWriter(ruta);
+            BufferedWriter escritor = new BufferedWriter(archivoEscritura);
+            escritor.write(content);
+            escritor.close();
+            System.out.println("Cadena guardada en el archivo correctamente.");
+        } catch (IOException e) {
+            System.err.println("Error al guardar la cadena en el archivo: " + e.getMessage());
+        }
+    }
+
+    public int contarParametros (String id) throws Exception {
+        ArrayList<String> scopeParams = TablaSimbolos.get(id);
+        int count = 0;
+        for (String elemento : scopeParams) {
+            String[] partes = elemento.split(":");
+            String idComp = partes[0].trim();
+            if(idComp.equals("parametro") ){ count++;}
+        }
+        return count;
+    }
+
+    public boolean validarRetorno(String tipo) {
+        // Verificar en el alcance local
+        ArrayList<String> informacion = TablaSimbolos.get(currentHash);
+        // Iterar sobre la lista de información
+        for (String info : informacion) {
+            // Imprimir la información
+            String[] partes = info.split(":");
+            if(partes[0].trim().equals("tipo") ) {
+                if(tipo.toLowerCase().equals( partes[2].trim().toLowerCase() )) {
+                    //System.out.println("El tipó de retorno si es compatible.");
+                    return true;
+                } 
+            }
+            
+        }
+        return false;
+    } 
+
+    public String getTipoFunc(String id) {
+        // Verificar en el alcance local
+        ArrayList<String> informacion = TablaSimbolos.get(id);
+        // Iterar sobre la lista de información
+        for (String info : informacion) {
+            // Imprimir la información
+            String[] partes = info.split(":");
+            return partes[2].trim();
+            //String = partes[0].trim()
+        }
+        return "null";
+    } 
+
+    public void toStringCod3D() {
+        // Verificar si la función existe en la tabla de símbolos
+        System.out.println(cod3D.toString());
+    }
+
+
+:}
+
+
+
+/* define how to connect to the scanner! */
+//init with {: s.init(); :};
+//scan with {: return s.next_token(); :};
+init with {::};
+scan with {:return lex.next_token();:};
+
+
+/* Terminals (tokens returned by the scanner). */
+terminal            PLUS, PLUSP, MINUS, MINUSM, DIV, POT, MOD, TIMES, INTEGER_LITERAL;
+terminal            IDENTIFIER, STRING_LITERAL, STRING_SINGLE, EQEQ, BREAK, EQ;
+terminal            GREATERT, LOWERT, GREATERE, LOWERE, NOT, NOTEQUALS, CONJUNTION, DISJUNTION, SEP;
+terminal            FLOTANTE, INT, FLOAT, CHAR, STRINGC;
+terminal            TRUE,FALSE;
+terminal            IF, ELSE, WHILE, FOR, IN, RANGE, SWITCH, CASE;
+terminal            GLOB, LOC, RETURN, PRINTF, FUNC, MAIN, PARAM, READ, DEFAULT;
+terminal            PARENTA, PARENTC, PARENTCA, PARENTCC, UNDERS;
+terminal            ENDLINE, BOOOLEANF, COMA;
+
+/* Non-terminals */
+non terminal String PROGRAMA, BODY, STATEMENT, EXP, ASIG, FUNCTION_STATEMENT, EXP_ARIT, VALUE, NUMBERS, EXP_REL, BOOL, LINE, FOR_STATEMENT, WHILE_STATEMENT, IF_STATEMENT, ELSE_STATEMENT, LINER, TERM, FACTOR, OPER_REL, EXP_REL_LOG;
+non terminal String EXP_LOG, OPER_LOG, OPERA_LOG, DECL, DECLOC, TYPES, INV_FUNC, PARAMS, PARAMETER, INV_ARRAY, VALUE_LIST, SWITCH_STATEMENT, CASE_LIST, PARAMDECL, EXP_ARIT_INTEGER, TERM_INTEGER, FACTOR_INTEGER;
+non terminal String PRINTLN, RETURN_STATEMENT, FUNC_STAT_DEF, BREAK_STATEMENT, INPUT_STATEMENT;
+
+/* Precedences */
+precedence left PLUS, MINUS;
+precedence left TIMES;
+precedence left DIV;
+
+/* The grammar rules */
+start with PROGRAMA;
+//Inicial.
+PROGRAMA  ::=  {: TablaSimbolos.put(globalHash, new ArrayList<String>()); cod3D.append("\n\nbegin_globals_:");:}
+                BODY
+                {: TablaSimbolosToString(); toStringCod3D();:};
+
+//cuerpo del programa.
+BODY ::= BODY STATEMENT | STATEMENT;
+
+//Lineas del codigo.
+STATEMENT::= 
+     FUNC_STAT_DEF
+     | DECL
+     | error ENDLINE
+     | error UNDERS;
+
+//Lineas recursivas.
+LINE::=
+      LINER | LINE LINER;
+//Cuerpo de los statements.
+LINER::=
+        ASIG
+      | DECLOC
+      | DECL
+      | FOR_STATEMENT
+      | WHILE_STATEMENT
+      | SWITCH_STATEMENT
+      | IF_STATEMENT
+      | EXP
+      | PARAMDECL
+      | PRINTLN
+      | RETURN_STATEMENT
+      | BREAK_STATEMENT
+      | INPUT_STATEMENT;
+
+//===============================================================================Expresiones Aritmeticas==================================================================
+//Numeros
+NUMBERS ::= INTEGER_LITERAL:i {:RESULT = i + ":" + "int";:} | FLOTANTE:f {:RESULT = f + ":" + "float";:} ;
+//BOOLEANOS
+BOOL ::= TRUE:t {:RESULT = t + ":" + "bool";:} | FALSE:f {:RESULT = f + ":" + "bool";:};
+
+//Expresiones.
+EXP::= EXP_REL_LOG ENDLINE;
+
+//expresiones aritmeticas.
+EXP_ARIT    ::= 
+              EXP_ARIT:e    PLUS    TERM:t {: 
+                                            String[] info1 = e.toString().split(":");
+                                            String[] info2 = t.toString().split(":");
+                                            if(!validarOperacionIntFloat(info1[0], info2[0])) { 
+                                                System.out.println("Parser: Err: Los operandos deben ser el mismo tipo"); RESULT = "null:null";
+                                            }
+                                            else {
+
+                                                String baseTemp = "t";
+                                                if(info1[0].equals("float")) { baseTemp = "f";}
+                                                
+                                                String miTempId = baseTemp + currentTemp++;
+                                                cod3D.append("\n" + miTempId + "=" + info1[1] + "+" + info2[1]);
+
+                                                //String miTempId = baseTemp + currentTemp++; 
+                                                RESULT = info1[0] +  ":" +  miTempId;}:}
+
+              | EXP_ARIT:e    MINUS   TERM:t {: 
+                                                String[] info1 = e.toString().split(":");
+                                                String[] info2 = t.toString().split(":");
+                                                if(!validarOperacionIntFloat(info1[0], info2[0])) { 
+                                                  System.out.println("Parser: Err: Los operandos deben ser el mismo tipo"); RESULT = "null:null";}
+                                                else { 
+                                                    String baseTemp = "t";
+                                                    if(info1[0].equals("float")) { baseTemp = "f";}
+
+                                                    String miTempId = baseTemp + currentTemp++;
+                                                    cod3D.append("\n" + miTempId + "=" + info1[1] + "+" + info2[1]);
+
+                                                    RESULT = info1[0] +  ":" +  miTempId;}:}
+              | TERM:t {: 
+                        RESULT = t;:};
+
+TERM    ::=    TERM:t TIMES FACTOR:f  {: 
+                                        String[] info1 = t.toString().split(":");
+                                        String[] info2 = f.toString().split(":");
+
+                                        String baseTemp = "t"; 
+                                        if(info1[0].equals("float")) { baseTemp = "f";} 
+                                        String miTempId = baseTemp + currentTemp++;
+                                        cod3D.append("\n" + miTempId + "=" + info1[1] + "*" + info2[1]);
+
+                                        if(!validarOperacionIntFloat(info1[0], info2[0])) { 
+                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo");
+                                             RESULT = "null:null";
+                                        }
+                                        else { RESULT = info1[0] +  ":" + miTempId;}:}
+
+            |   TERM:t DIV FACTOR:f  {: 
+                                        String[] info1 = t.toString().split(":");
+                                        String[] info2 = f.toString().split(":");
+
+                                        String baseTemp = "t"; 
+                                        if(info1[0].equals("float")) { baseTemp = "f";} 
+                                        String miTempId = baseTemp + currentTemp++;
+                                        cod3D.append("\n" + miTempId + "=" + info1[1] + "/" + info2[1]);
+
+                                        if(!validarOperacionIntFloat(info1[0], info2[0])) { 
+                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo");
+                                            RESULT = "null:null";
+                                        }
+                                        else { RESULT = info1[0] +  ":" + miTempId;}:}
+
+            |   TERM:t POT FACTOR:f  {: 
+                                        String[] info1 = t.toString().split(":");
+                                        String[] info2 = f.toString().split(":");
+
+                                        String baseTemp = "t";  
+                                        if(info1[0].equals("float")) { baseTemp = "f";}
+                                        String miTempId = baseTemp + currentTemp++;
+                                        cod3D.append("\n" + miTempId + "=" + info1[1] + "^" + info2[1]);
+
+                                        if(!validarOperacionIntFloat(info1[0], info2[0])) { 
+                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo");
+                                            RESULT = "null:null";
+                                        } 
+                                        else { RESULT = info1[0] +  ":" + miTempId; }:}
+
+            |   TERM:t MOD FACTOR:f {: 
+                                        String[] info1 = t.toString().split(":");
+                                        String[] info2 = f.toString().split(":");
+
+                                        String baseTemp = "t";  
+                                        if(info1[0].equals("float")) { baseTemp = "f";}
+                                        String miTempId = baseTemp + currentTemp++;
+                                        cod3D.append("\n" + miTempId + "=" + info1[1] + "%" + info2[1]);
+
+                                        if(!validarOperacionIntFloat(info1[0], info2[0])) {
+                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo");
+                                            RESULT = "null:null";
+                                        }
+                                        else { RESULT = info1[0] +  ":" + miTempId; }:}
+
+            |   FACTOR:f {: 
+                            RESULT = f;
+                        :};
+
+FACTOR  ::=  PARENTA EXP_ARIT:e PARENTC {:RESULT = e;:}
+            | MINUS NUMBERS:n {:
+                                String baseTemp = "t";  
+                                String[] info = n.toString().split(":");
+                                if(info[1].equals("float")) { baseTemp = "f";}
+
+                                String miTempId1 = baseTemp + currentTemp++;
+                                String miTempId2 = baseTemp + currentTemp++;
+                                String miTempId3 = baseTemp + currentTemp++;
+
+                                cod3D.append("\n" + miTempId1 + "= -1");
+                                cod3D.append("\n" + miTempId2 + "=" + info[0]);
+                                cod3D.append("\n" + miTempId3 + "=" + miTempId1 + " * " + miTempId2);
+
+                                RESULT = info[1] + ":" + miTempId3;
+                              :}
+            | NUMBERS:n {:
+                            String baseTemp = "t";  
+                            String[] info = n.toString().split(":");
+                            if(info[1].equals("float")) { baseTemp = "f";}
+                            String miTempId = baseTemp + currentTemp++;
+                            cod3D.append("\n" + miTempId + "=" + info[0]);
+                            RESULT = info[1] + ":" + miTempId;
+                        :} 
+
+            | STRING_LITERAL:s {:
+                                String miTempId = "t"+currentTemp++;
+                                cod3D.append("\n" +  miTempId + "=" + s.toString());
+                                RESULT = "String:" + miTempId; 
+                               :}
+            | STRING_SINGLE:s {:
+                                String miTempId = "t"+currentTemp++;
+                                cod3D.append("\n" +  miTempId + "=" + s.toString());
+                                RESULT = "String:" + miTempId;
+                              :}
+
+            | IDENTIFIER:i {: String tipo = getTipo(i.toString()); if(validarUsoVariable(i.toString())) { 
+                                                                        String baseTemp = "t";
+                                                                        if (tipo.equals("float")) baseTemp = "f";
+                                                                        String miTempId = baseTemp + currentTemp++;
+                                                                        cod3D.append("\n" + miTempId + "=" + i.toString());
+                                                                        RESULT = tipo +  ":" + miTempId;
+                                                                    }
+                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null"; } :}
+
+            | IDENTIFIER:i MINUSM {: String tipo = getTipo(i.toString()); if(validarUsoVariable(i.toString())) {
+                                                                                String baseTemp = "t";
+                                                                                if (tipo.equals("float")) baseTemp = "f";
+                                                                                String miTempId1 = baseTemp + currentTemp++;
+                                                                                String miTempId2 = baseTemp + currentTemp++;
+                                                                                String miTempId3 = baseTemp + currentTemp++;
+                                                                                
+                                                                                cod3D.append("\n" + miTempId1 + "= 1");
+                                                                                cod3D.append("\n" + miTempId2 + "=" + i.toString());
+                                                                                cod3D.append("\n" + miTempId3 + "=" + miTempId1 + "-" + miTempId2);
+                                                                                RESULT = tipo +  ":" + miTempId3;
+                                                                           }
+                                                                           else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null";} :}
+
+            | IDENTIFIER:i PLUSP {: String tipo = getTipo(i.toString()); if(validarUsoVariable(i.toString())) {
+                                                                            
+                                                                            String baseTemp = "t";
+                                                                            if (tipo.equals("float")) baseTemp = "f";
+                                                                            String miTempId1 = baseTemp + currentTemp++;
+                                                                            String miTempId2 = baseTemp + currentTemp++;
+                                                                            String miTempId3 = baseTemp + currentTemp++;
+                                                                            
+                                                                            cod3D.append("\n" + miTempId1 + "= 1");
+                                                                            cod3D.append("\n" + miTempId2 + "=" + i.toString());
+                                                                            cod3D.append("\n" + miTempId3 + "=" + miTempId1 + "+" + miTempId2);
+                                                                            RESULT = tipo +  ":" + miTempId3;
+                                                                         }
+                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null";} :}
+
+            | INV_FUNC:f {:
+                           
+                           String[] info = f.toString().split(":");
+                           String baseTemp = "t";
+                           String miTempId = baseTemp + currentTemp++;
+                           String miCall = "begin_func_" + info[0] ;
+                           int cant = contarParametros(info[0]);
+                           cod3D.append("\n" + miTempId + "= call " + miCall + ", " + cant);
+                           RESULT = info[1] + ":" +miTempId;
+                        :}
+            | INV_ARRAY:ia {:
+                            String baseTemp = "t";
+                            String miTempId = baseTemp + currentTemp++;
+                            String[] info = ia.toString().split(":"); 
+                            String tipo = getTipo(info[0]);
+                            String miArray = info[0] + ", " +  info[1] ;
+                            cod3D.append("\n" + miTempId + "= array " + miArray);
+                            RESULT = tipo + ":" + miTempId;
+                            :};
+
+//expresiones aritmeticas.
+EXP_ARIT_INTEGER    ::= 
+                EXP_ARIT_INTEGER    PLUS    TERM_INTEGER
+              | EXP_ARIT_INTEGER    MINUS   TERM_INTEGER  
+              | TERM_INTEGER;
+
+TERM_INTEGER    ::=    
+                TERM_INTEGER TIMES FACTOR_INTEGER
+            |   TERM_INTEGER DIV FACTOR_INTEGER
+            |   TERM_INTEGER POT FACTOR_INTEGER
+            |   TERM_INTEGER MOD FACTOR_INTEGER
+            |   FACTOR_INTEGER;
+FACTOR_INTEGER  ::=  PARENTA EXP_ARIT_INTEGER PARENTC
+            | NUMBERS
+            | IDENTIFIER:ID
+                         {: 
+                            if (!validarUsoVariable(ID.toString())) {
+                                System.out.println("Parser: Err : Variable " + ID.toString() + " no declarada.");
+                            } 
+                        :}
+            | IDENTIFIER:ID PLUSP
+                            {: 
+                                if (!validarUsoVariable(ID.toString())) {
+                                    System.out.println("Parser: Err : Variable " + ID.toString() + " no declarada.");
+                                } 
+                            :}
+            | IDENTIFIER:ID MINUSM
+                            {: 
+                                if (!validarUsoVariable(ID.toString())) {
+                                    System.out.println("Parser: Err : Variable " + ID.toString() + " no declarada.");
+                                } 
+                            :}
+            | MINUS NUMBERS
+            | INV_FUNC
+            | INV_ARRAY;
+
+//===============================================================================Expresiones Aritmeticas End==================================================================
+
+//===============================================================================Expresiones relacionales==================================================================
+//operaciones relacionales logicas.
+EXP_REL_LOG ::= EXP_REL:e1 {:RESULT = e1;:} | EXP_LOG:e2 {:RESULT = e2;:};
+
+EXP_REL    ::= EXP_ARIT:e1    OPER_REL:op    EXP_ARIT:e2 {:
+                                                        String[] info1 = e1.toString().split(":");
+                                                        String[] info2 = e2.toString().split(":");
+                                                        String[] info3 = op.toString().split(":");
+
+                                                        String baseTemp = "t";
+                                                        String miTempId = baseTemp + currentTemp++;
+                                                        cod3D.append("\n" + miTempId + "=" +  info1[1] + info3[1] + info2[1]);
+
+                                                        if(info1[0].equals(info2[0])) {
+                                                            RESULT = "bool:" + miTempId;
+                                                        } 
+                                                        else { 
+                                                            System.out.println("Parser: Err: El resultado de las operaciones debe ser entero o flotante : exp1: " + e1.toString() + " exp2: " + e2.toString()); 
+                                                            RESULT = "null:null"; } :}
+            | PARENTA EXP_REL:e PARENTC {:RESULT = e;:}
+            | NOT PARENTA EXP_REL:e PARENTC {:
+                                                String[] info = e.toString().split(":");
+                                                String baseTemp = "t";
+                                                String miTempId = baseTemp + currentTemp++;
+                                                cod3D.append("\n" + miTempId + "= !" + info[1] );
+                                                RESULT = info[0] +  ":" + info[1];
+                                            :}
+            | MINUS PARENTA EXP_REL_LOG:e PARENTC {:RESULT = e;:}
+            | BOOL:b {: 
+                        String baseTemp = "t";  
+                        String[] info = b.toString().split(":");
+                        String miTempId = baseTemp + currentTemp++;
+                        
+                        cod3D.append("\n" + miTempId + "=" + info[0]);
+                        RESULT = info[1] + ":" + miTempId;
+                        //System.out.println(RESULT);
+                        :};
+
+//Operador logico.
+EXP_LOG ::= OPER_LOG:op1 {:RESULT = op1;:} 
+          | EXP_REL:e1  OPERA_LOG:op1 EXP_REL_LOG:e2  {:  
+                                                    String[] info1 = e1.toString().split(":");
+                                                    String[] info2 = e2.toString().split(":");
+                                                    String[] info3 = op1.toString().split(":");
+
+                                                    String baseTemp = "t";
+                                                    String miTempId = baseTemp + currentTemp++;
+
+                                                    cod3D.append("\n" + miTempId + "=" + info1[1] +  info3[1] + info2[1] );
+
+                                                    if(info1[0].equals(info2[0])) {
+                                                        RESULT = "bool:" +  miTempId;
+                                                    }
+                                                    else {
+                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + e1.toString() + " oper2: " +  e2.toString());
+                                                        RESULT = "null:null";}  :}  
+
+          | PARENTA EXP_REL:e1  OPERA_LOG:op1 EXP_REL_LOG:e2 PARENTC {: 
+                                                    String[] info1 = e1.toString().split(":");
+                                                    String[] info2 = e2.toString().split(":");
+                                                    String[] info3 = op1.toString().split(":");
+
+                                                    String baseTemp = "t";
+                                                    String miTempId = baseTemp + currentTemp++;
+
+                                                    cod3D.append("\n" + miTempId + "=" + info1[1] +  info3[1] + info2[1] );
+
+                                                    if(info1[0].equals(info2[0])) {
+                                                        RESULT = "bool:" +  miTempId;
+                                                    }
+                                                    else {
+                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + e1.toString() + " oper2: " +  e2.toString());
+                                                        RESULT = "null:null";}  :}  
+
+          | NOT PARENTA EXP_REL:e1  OPERA_LOG:op1 EXP_REL_LOG:e2 PARENTC {:  
+                                                    String[] info1 = e1.toString().split(":");
+                                                    String[] info2 = e2.toString().split(":");
+                                                    String[] info3 = op1.toString().split(":");
+
+                                                    String baseTemp = "t";
+                                                    String miTempId = baseTemp + currentTemp++;
+
+                                                    cod3D.append("\n" + miTempId + "=!" + info1[1] +  info3[1] + info2[1] );
+
+                                                    if(info1[0].equals(info2[0])) {
+                                                        RESULT = "bool:" +  miTempId;
+                                                    }
+                                                    else {
+                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + e1.toString() + " oper2: " +  e2.toString());
+                                                        RESULT = "null:null";}  :}  
+
+          | IDENTIFIER:id OPERA_LOG:op1 EXP_REL_LOG:e {: String comp = getTipo(id.toString()); 
+                                                    String[] info1 = id.toString().split(":");
+                                                    String[] info2 = e.toString().split(":");
+                                                    String[] info3 = op1.toString().split(":");
+
+                                                    String baseTemp = "t";
+                                                    String miTempId = baseTemp + currentTemp++;
+
+                                                    cod3D.append("\n" + miTempId + "=" + info1[1] +  info3[1] + info2[1] );
+
+                                                    if(info1[0].equals(info2[0])) {
+                                                        RESULT = "bool:" +  miTempId;
+                                                    }
+                                                    else {
+                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + info1[0] + " oper2: " +  info2[0]);
+                                                        RESULT = "null:null";}  :}  
+
+          | PARENTA IDENTIFIER:id  OPERA_LOG:op1 EXP_REL_LOG:e PARENTC   {: String comp = getTipo(id.toString()); 
+                                                    String[] info1 = id.toString().split(":");
+                                                    String[] info2 = e.toString().split(":");
+                                                    String[] info3 = op1.toString().split(":");
+
+                                                    String baseTemp = "t";
+                                                    String miTempId = baseTemp + currentTemp++;
+
+                                                    cod3D.append("\n" + miTempId + "=" + info1[1] +  info3[1] + info2[1] );
+
+                                                    if(info1[0].equals(info2[0])) {
+                                                        RESULT = "bool:" +  miTempId;
+                                                    }
+                                                    else {
+                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + info1[0] + " oper2: " +  info2[0]);
+                                                        RESULT = "null:null";}  :}  
+
+          | NOT PARENTA IDENTIFIER:id  OPERA_LOG:op1 EXP_REL_LOG:e PARENTC  {: 
+                                                    String[] info1 = id.toString().split(":");
+                                                    String[] info2 = e.toString().split(":");
+                                                    String[] info3 = op1.toString().split(":");
+
+                                                    String baseTemp = "t";
+                                                    String miTempId = baseTemp + currentTemp++;
+
+                                                    cod3D.append("\n" + miTempId + "=!" + info1[1] +  info3[1] + info2[1] );
+
+                                                    if(info1[0].equals(info2[0])) {
+                                                        RESULT = "bool:" +  miTempId;
+                                                    }
+                                                    else {
+                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + info1[0] + " oper2: " +  info2[0]);
+                                                        RESULT = "null:null";}  :} ;
+//operando logico.
+OPER_LOG ::= EXP_ARIT:e {: 
+                        String[] info = e.toString().split(":");
+                        RESULT = e;
+                        :};
+
+//Operadores relacionales.
+OPER_REL ::= GREATERT:op {:RESULT = "bool:" + op;:} 
+            | GREATERE:op {:RESULT = "bool:" + op;:} 
+            |  LOWERT:op {:RESULT = "bool:" + op;:} 
+            | LOWERE:op {:RESULT = "bool:" + op;:} 
+            | EQEQ:op {:RESULT = "bool:" + op;:} 
+            | NOTEQUALS:op {:RESULT = "bool:" + op;:};
+
+OPERA_LOG ::= DISJUNTION:d {:RESULT = "bool:" +  d;:} | CONJUNTION:c {:RESULT = "bool:" + c;:};
+//===============================================================================Expresiones Relacionales End==================================================================
+
+//===============================================================================Asignaciones y declaraciones==================================================================
+//Asignacion de valores a una variable.
+ASIG::= IDENTIFIER:ID EQ VALUE:v ENDLINE
+                                {: 
+                                    if (!validarUsoVariable(ID.toString())) {
+                                        System.out.println("Parser: Err : Variable: " + ID.toString() + " no declarada.");
+                                        
+                                    } 
+                                    String[] info = v.toString().split(":");
+                                    String baseTemp = "t";
+                                    String miTempId = baseTemp + currentTemp++;
+                                    cod3D.append("\n" + miTempId + " = " + info[1]);
+                                    cod3D.append("\n" + ID.toString() + " = " + miTempId);
+
+                                :};
+
+DECL::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID ENDLINE {: if(validarScopeVariablesGlobales(ID.toString())) { 
+                                                        TablaSimbolos.get(globalHash).add("variableGLob: " + ID.toString() + ":" + tglob.toString());
+
+                                                        cod3D.append("\nglobal_data_" + tglob.toString() + " " + ID.toString());
+
+                                                        } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} :};
+
+DECL::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID EQ VALUE:v ENDLINE {:String[] info = v.toString().split(":"); 
+                                                                    if(validarScopeVariablesGlobales(ID.toString())) {
+                                                                        if(tglob.toString().equals(info[0])) {TablaSimbolos.get(globalHash).add("variableGLob: " + ID.toString() + ":" + tglob.toString());}
+                                                                        else {System.out.println("Parser: Err : El valor asignado no es compatible con el tipo declarado de la variable: " + ID.toString());}
+
+                                                                     } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} :};
+
+DECL ::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC ENDLINE {: if(validarScopeVariablesGlobales(ID.toString())) {  
+                                                                                            TablaSimbolos.get(currentHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
+                                                                                            cod3D.append("\nglobal_data_array" + tglob.toString() + " " + ID.toString());
+                                                                                            } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} :};
+
+DECL ::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC EQ VALUE_LIST ENDLINE  {: if(validarScopeVariablesGlobales(ID.toString())) {  
+                                                                                            TablaSimbolos.get(currentHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
+                                                                                            } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} :};
+
+DECLOC::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID ENDLINE {:
+                                                          if(validarScopeVariables(ID.toString())){
+                                                            TablaSimbolos.get(currentHash).add("variableLoc: " + ID.toString() + ":" + tloc.toString());
+                                                            cod3D.append("\nlocal_data_" + tloc.toString() + " " + ID.toString());
+                                                          } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString());}
+                                                         :};
+
+DECLOC::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID EQ VALUE:v ENDLINE {: 
+                                                                    String[] info = v.toString().split(":"); 
+                                                                   if(validarScopeVariables(ID.toString())){
+                                                                        if(tloc.toString().equals(info[0])) {
+                                                                            TablaSimbolos.get(currentHash).add("variableLoc: " + ID.toString() + ":" + tloc.toString());
+                                                                        
+                                                                            String baseTemp = "t";
+                                                                            String miTempId = baseTemp + currentTemp++;
+                                                                            cod3D.append("\n" + miTempId + " = " + info[1]);
+                                                                            cod3D.append("\n" + ID.toString() + " = " + miTempId);
+                                                                            }
+
+                                                                        else {System.out.println("Parser: Err : El valor asignado no es compatible con el tipo declarado de la variable: " + ID.toString());} 
+                                                                   } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString());}
+                                                                   :};
+                                                                    
+DECLOC ::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC ENDLINE {:
+                                                                                            if(validarScopeVariables(ID.toString())){ 
+                                                                                                TablaSimbolos.get(currentHash).add("array: " + ID.toString() + ":" + tloc.toString());
+                                                                                                cod3D.append("\nlocal_data_array" + tloc.toString() + " " + ID.toString());
+                                                                                            } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString());}
+                                                                                            :};
+
+DECLOC ::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC EQ  PARENTCA VALUE_LIST:vl PARENTCC ENDLINE  {:
+                                                                                                        String[] info = vl.toString().split(":");
+                                                                                                        if(validarScopeVariables(ID.toString())){
+                                                                                                            if (info[0].equals(tloc.toString())) {TablaSimbolos.get(currentHash).add("array: " + ID.toString() + ":" + tloc.toString());}
+                                                                                                            else { System.out.println("Parser: Err: Los elementos no son del mismo tipo que el array declarado: " +  ID.toString());} 
+                                                                                                            
+                                                                                                        } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString());}
+                                                                                                        :};
+
+TYPES::= CHAR {: RESULT = "char"; :} 
+        | FLOAT {: RESULT = "float"; :}
+        | STRINGC {: RESULT = "String"; :}
+        | INT {: RESULT = "int"; :}
+        | BOOOLEANF {: RESULT = "bool"; :};
+
+//posibles valores que puede tener una asignacion.
+VALUE::= EXP_REL_LOG:e {: 
+                        String[] info = e.toString().split(":");
+                        RESULT = e.toString();:};
+//===============================================================================Asignaciones y declaraciones End==================================================================
+
+
+//===============================================================================Funcion==================================================================
+//Declaracion de funciones.
+FUNCTION_STATEMENT::= FUNC SEP INT SEP MAIN {:          
+                                                        RESULT = "main";
+                                                        cod3D.append("\n\nbegin_func_main: ");  
+                                                        String tipo;
+                                                        if (flagMain){ System.out.println("Parser: err: dos o mas mains declarados.");}
+                                                        else{
+                                                         flagMain = true;
+                                                         tipo = "tipo:Main:int";
+                                                         ArrayList<String> fun = new ArrayList<String>();
+                                                         currentHash = "main";
+                                                         fun.add(tipo);
+                                                         TablaSimbolos.put(currentHash, fun);
+                                                        }
+                                            :};
+
+FUNCTION_STATEMENT::= FUNC SEP INT SEP IDENTIFIER:ID  
+                                                    {:
+                                                        RESULT = ID.toString();
+                                                        cod3D.append("\n\nbegin_func_" + ID.toString() +  ":");  
+                                                        if (validarNombreFuncion(ID.toString())) {
+                                                            String tipo = "tipo:func:int";
+                                                            ArrayList<String> fun = new ArrayList<String>();
+                                                            currentHash = ID.toString();
+                                                            fun.add(tipo);
+                                                            TablaSimbolos.put(currentHash, fun);
+                                                        } else {
+                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString());
+                                                        }
+                                                    :};
+
+FUNCTION_STATEMENT::= FUNC SEP FLOAT SEP IDENTIFIER:ID 
+                                                    {: 
+                                                        RESULT = ID.toString();
+                                                        cod3D.append("\n\nbegin_func_" + ID.toString() +  ":");  
+                                                        if (validarNombreFuncion(ID.toString())) {
+                                                            String tipo = "tipo:func:float";
+                                                            ArrayList<String> fun = new ArrayList<String>();
+                                                            currentHash = ID.toString();
+                                                            fun.add(tipo);
+                                                            TablaSimbolos.put(currentHash, fun);
+                                                        } else {
+                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString());
+                                                        }
+                                                    :};
+
+FUNCTION_STATEMENT::= FUNC SEP BOOOLEANF SEP IDENTIFIER:ID  
+                                                    {: 
+                                                        RESULT = ID.toString();
+                                                        cod3D.append("\n\nbegin_func_" + ID.toString() +  ":");  
+                                                        if (validarNombreFuncion(ID.toString())) {
+                                                            String tipo = "tipo:func:bool";
+                                                            ArrayList<String> fun = new ArrayList<String>();
+                                                            currentHash = ID.toString();
+                                                            fun.add(tipo);
+                                                            TablaSimbolos.put(currentHash, fun);
+                                                        } else {
+                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString());
+                                                        }
+                                                        
+                                                    :};
+
+FUNCTION_STATEMENT::= FUNC SEP CHAR SEP IDENTIFIER:ID  
+                                                    {: 
+                                                        RESULT = ID.toString();
+                                                        cod3D.append("\n\nbegin_func_" + ID.toString() +  ":");  
+                                                        if (validarNombreFuncion(ID.toString())) {
+                                                            String tipo = "tipo:func:char";
+                                                            ArrayList<String> fun = new ArrayList<String>();
+                                                            currentHash = ID.toString();
+                                                            fun.add(tipo);
+                                                            TablaSimbolos.put(currentHash, fun);
+                                                        } else {
+                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString());
+                                                        }
+                                                    :};
+
+FUNCTION_STATEMENT::= FUNC SEP STRINGC SEP IDENTIFIER:ID  
+                                                    {: 
+                                                        RESULT = ID.toString();
+                                                        cod3D.append("\n\nbegin_func_" + ID.toString() +  ":"); 
+                                                        if (validarNombreFuncion(ID.toString())) {
+                                                            String tipo = "tipo:func:string";
+                                                            ArrayList<String> fun = new ArrayList<String>();
+                                                            currentHash = ID.toString();
+                                                            fun.add(tipo);
+                                                            TablaSimbolos.put(currentHash, fun);
+                                                        } else {
+                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString());
+                                                        }
+                                                    :};
+FUNC_STAT_DEF ::= FUNCTION_STATEMENT:fs UNDERS LINE UNDERS {: String name = fs; int cant = contarParametros(fs); 
+                                                            currentTemp = 1; :};
+
+
+
+INV_FUNC ::= IDENTIFIER:ID PARENTA PARENTC
+                                        {: 
+                                            RESULT = ID.toString()  + ":" + getTipoFunc(ID.toString());
+                                            //System.out.println(RESULT);
+                                            if (validarFuncionExistente(ID.toString())) {
+
+                                            } else {
+                                                System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida.");
+                                            }
+                                        :};
+
+INV_FUNC ::= IDENTIFIER:ID PARENTA PARAMS PARENTC
+                                            {: 
+                                                RESULT = ID.toString()  + ":" + getTipoFunc(ID.toString());
+                                                //System.out.println(RESULT);
+                                                if (validarFuncionExistente(ID.toString())) {
+
+                                                } else {
+                                                    System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida.");
+                                                }
+                                            :};
+
+
+PARAMS ::= PARAMETER COMA PARAMS;
+PARAMS ::= PARAMETER;
+
+PARAMETER ::= VALUE;
+
+PARAMDECL ::= PARAM SEP TYPES:tparam SEP IDENTIFIER:ID ENDLINE {: TablaSimbolos.get(currentHash).add("parametro : "+ ID.toString() + ":" + tparam.toString()); :};
+
+//Invocaciones de un array
+INV_ARRAY ::= IDENTIFIER:ID PARENTCA INTEGER_LITERAL:i PARENTCC {:  RESULT = ID.toString() +":" + i.toString(); :};
+
+VALUE_LIST ::= VALUE:v COMA VALUE_LIST:vl {:
+                                            String[] info1 = v.toString().split(":"); 
+                                            String[] info2 = vl.toString().split(":"); 
+                                            if(info1[0].toString().equals(info2[0])) { RESULT = v.toString(); }
+                                            else { RESULT = "null:null"; } :} 
+               | VALUE:v {: RESULT = v; :} ;
+
+
+PRINTLN ::= PRINTF PARENTA PARENTC ENDLINE;
+PRINTLN ::= PRINTF PARENTA STRING_LITERAL PARENTC ENDLINE;
+PRINTLN ::= PRINTF PARENTA STRING_SINGLE PARENTC ENDLINE;
+PRINTLN ::= PRINTF PARENTA IDENTIFIER PARENTC ENDLINE;
+
+INPUT_STATEMENT ::= READ PARENTA IDENTIFIER PARENTC ENDLINE; 
+
+
+//===============================================================================Funciones End==================================================================
+
+
+//===============================================================================Estructuras de control==================================================================
+//Declaracion de IF.
+IF_STATEMENT ::= IF PARENTA EXP_REL_LOG PARENTC UNDERS LINE UNDERS ELSE_STATEMENT;
+
+ELSE_STATEMENT ::= ELSE UNDERS LINE UNDERS | ;
+
+WHILE_STATEMENT ::= WHILE PARENTA EXP_REL_LOG PARENTC UNDERS LINE UNDERS;
+
+FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER PARENTC UNDERS LINE UNDERS;
+FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER COMA EXP_ARIT_INTEGER PARENTC UNDERS LINE UNDERS;
+FOR_STATEMENT ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT_INTEGER COMA EXP_ARIT_INTEGER COMA EXP_ARIT_INTEGER PARENTC UNDERS LINE UNDERS;
+
+SWITCH_STATEMENT ::= SWITCH PARENTA IDENTIFIER PARENTC UNDERS CASE_LIST UNDERS;
+
+CASE_LIST ::= CASE EXP_ARIT SEP LINE CASE_LIST | CASE EXP_ARIT SEP LINE | DEFAULT SEP LINE | DEFAULT SEP;
+
+
+
+//===============================================================================Estructuras de control End==================================================================
+
+//===============================================================================Return==================================================================
+RETURN_STATEMENT ::=  RETURN ENDLINE {: System.out.println("Parser: Err: El retorno no puede ser vacio."); :};
+RETURN_STATEMENT ::=  RETURN SEP VALUE:v ENDLINE {: 
+                                                
+                                                String[] info = v.toString().split(":"); 
+                                                boolean retorno = validarRetorno(info[0]);
+
+                                                cod3D.append("\nretorno = " + info[1]);  
+                                                if(!retorno) { 
+                                                    System.out.println("Parser: Err: El tipo de retorno no es compatible con el tipo de la funcion."); 
+                                                }:};
+
+BREAK_STATEMENT ::=  BREAK ENDLINE;
+
+
+//===============================================================================Return==================================================================
+

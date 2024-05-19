@@ -1,0 +1,89 @@
+glob:char:pi1;
+glob:bool:pi;/*semantico*/
+glob:bool:pi2;/*semantico*/
+glob:string:pi31;/*semantico*/
+glob:string:pi6 = 'HOL';
+glob:int:in1 = 7;
+glob:bool:pi7 = true;
+glob:string:pi8 = "dxcx";
+glob:int:var = 7;
+//glob:int:pi = (randall || eandal && randall && (5+6 >6));
+//
+
+func:bool:func2_
+        param:int:x22;
+        print(i);
+        var = 12;
+        x22--;
+        x22++;
+        while (!(x22<=45)&&var>5) _
+            // Cuerpo del bucle
+            print("El bucle 'while' está en ejecución.");
+
+            // Modificar la condición de alguna manera para que el bucle termine eventualmente
+            loc:bool:condition = pi; // Por ejemplo, establecer la condición como falsa para salir del bucle
+            return: true;
+        _
+        switch(x) _
+            case 1:
+                // código para caso 1
+                break;
+            case 2:
+                // código para caso 2
+                break;
+            default:
+                // código para el caso predeterminado
+        _
+
+	return: false;
+_
+
+
+func:int:main_ 
+                loc:string:miChar='!';
+                loc:string:str1="Mi string 1";
+                loc:int:fl1;
+                loc:float:fl21= 45.3 * 4.5 + 5.1; //semantico fl1
+                loc:float:fl213= 45.3 / 4.5; //semantico fl1
+                
+                if(true && false)_ print(pi6); _
+                if(var<=45&&var>5)_ print(pi6);_
+                if(true && false)_print(pi6);_ else _ print(pi6); _
+                loc:int:hola[12] = [1,2,3];
+                loc:float:hola1 = 32.3;
+                loc:bool:bl1 = in1 >= fl1 || false && func2(3, in1 > hola[5]); //semantico in1 >= fl1, func2
+                for:i:in:range(10,20,30)_
+                    print(i);
+                _
+                return:6;
+_
+func:int:fun1_  return:4; _
+func:int:fun3_  return:4; _
+
+
+func:float:func1 _
+	param:int:x22;
+        param:int:x223;
+        param:int:x2234;
+	if(!(x22<=45)&&var>5)_ //semantico x22, var
+		glob:int:y;
+		x22=10;
+		loc:string:ch33="";
+                return:5.3; //semantico
+	_else_
+		loc:int:y;//no error o no???
+		loc:string:str2="sdff";
+                break;
+	_
+        print(i);
+	for:i:in:range(5)_ print(i); _
+	return:14.2;//cambio en retorno genera semantico*/
+_
+
+
+
+
+func:string:func3_ //semantico string
+	loc:string:b1;
+	return:b1; 
+_
