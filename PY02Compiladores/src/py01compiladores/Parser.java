@@ -2455,7 +2455,12 @@ class CUP$Parser$actions {
 		String v = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		String[] info = v.toString().split(":"); 
                                                                     if(validarScopeVariablesGlobales(ID.toString())) {
-                                                                        if(tglob.toString().equals(info[0])) {TablaSimbolos.get(globalHash).add("variableGLob: " + ID.toString() + ":" + tglob.toString());}
+                                                                        //System.out.println(info[0]);
+                                                                        if(tglob.toString().equals(info[0])) {
+                                                                            TablaSimbolos.get(globalHash).add("variableGLob: " + ID.toString() + ":" + tglob.toString());
+                                                                            cod3D.append("\nglobal_data_" + tglob.toString() + " " + ID.toString());
+                                                                            cod3D.append("\n" + ID.toString() + "=" + info[1]);
+                                                                            }
                                                                         else {System.out.println("Parser: Err : El valor asignado no es compatible con el tipo declarado de la variable: " + ID.toString());}
 
                                                                      } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} 
@@ -2501,11 +2506,14 @@ class CUP$Parser$actions {
 		int IDleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-6)).left;
 		int IDright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-6)).right;
 		Object ID = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-6)).value;
+		int vleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).left;
+		int vright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).right;
+		String v = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		 
                                                                                         if(validarScopeVariablesGlobales(ID.toString())) {
                                                                                             if (tglob.toString().equals("int") || tglob.toString().equals("char")){
                                                                                                 TablaSimbolos.get(globalHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
-                                                                                                cod3D.append("\nglobal_data_array" + tglob.toString() + " " + ID.toString());
+                                                                                                cod3D.append("\nglobal_data_array " + tglob.toString() + " " + ID.toString());
                                                                                             }  
                                                                                             else {
                                                                                                 System.out.println("Parser: Err : El array solo permite ser de tipo int o char");
@@ -2560,6 +2568,7 @@ class CUP$Parser$actions {
                                                                         
                                                                             String baseTemp = "t";
                                                                             String miTempId = baseTemp + currentTemp++;
+                                                                            cod3D.append("\nlocal_data_" + tloc.toString() + " " + ID.toString());
                                                                             cod3D.append("\n" + miTempId + " = " + info[1]);
                                                                             cod3D.append("\n" + ID.toString() + " = " + miTempId);
                                                                             }
@@ -2971,7 +2980,12 @@ class CUP$Parser$actions {
 		
                                             String[] info1 = v.toString().split(":"); 
                                             String[] info2 = vl.toString().split(":"); 
-                                            if(info1[0].toString().equals(info2[0])) { RESULT = v.toString(); }
+                                            if(info1[0].toString().equals(info2[0])) { 
+                                                RESULT = v.toString(); 
+                                                String baseTemp = "t";
+                                                String miTempId = baseTemp + currentTemp++;
+                                                cod3D.append("\nArrayElement " + miTempId + " = " + info1[1]);
+                                            }
                                             else { RESULT = "null:null"; } 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("VALUE_LIST",31, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -2985,6 +2999,10 @@ class CUP$Parser$actions {
 		int vright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		String v = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		 RESULT = v; 
+                            String[] info1 = v.toString().split(":"); 
+                            String baseTemp = "t";
+                            String miTempId = baseTemp + currentTemp++;
+                            cod3D.append("\nArrayElement " + miTempId + " = " + info1[1]);
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("VALUE_LIST",31, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

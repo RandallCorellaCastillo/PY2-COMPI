@@ -696,7 +696,12 @@ DECL::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID ENDLINE {: if(validarScopeVariabl
 
 DECL::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID EQ VALUE:v ENDLINE {:String[] info = v.toString().split(":"); 
                                                                     if(validarScopeVariablesGlobales(ID.toString())) {
-                                                                        if(tglob.toString().equals(info[0])) {TablaSimbolos.get(globalHash).add("variableGLob: " + ID.toString() + ":" + tglob.toString());}
+                                                                        //System.out.println(info[0]);
+                                                                        if(tglob.toString().equals(info[0])) {
+                                                                            TablaSimbolos.get(globalHash).add("variableGLob: " + ID.toString() + ":" + tglob.toString());
+                                                                            cod3D.append("\nglobal_data_" + tglob.toString() + " " + ID.toString());
+                                                                            cod3D.append("\n" + ID.toString() + "=" + info[1]);
+                                                                            }
                                                                         else {System.out.println("Parser: Err : El valor asignado no es compatible con el tipo declarado de la variable: " + ID.toString());}
 
                                                                      } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString());} :};
@@ -717,12 +722,12 @@ DECL ::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTC
                                                                                         } 
                                                                                     :};
 
-DECL ::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC EQ VALUE_LIST ENDLINE  
+DECL ::= GLOB SEP TYPES:tglob SEP IDENTIFIER:ID PARENTCA INTEGER_LITERAL PARENTCC EQ VALUE_LIST:v ENDLINE  
                                                                                     {: 
                                                                                         if(validarScopeVariablesGlobales(ID.toString())) {
                                                                                             if (tglob.toString().equals("int") || tglob.toString().equals("char")){
                                                                                                 TablaSimbolos.get(globalHash).add("GlobArray: " + ID.toString() + ":" + tglob.toString());
-                                                                                                cod3D.append("\nglobal_data_array" + tglob.toString() + " " + ID.toString());
+                                                                                                cod3D.append("\nglobal_data_array " + tglob.toString() + " " + ID.toString());
                                                                                             }  
                                                                                             else {
                                                                                                 System.out.println("Parser: Err : El array solo permite ser de tipo int o char");
@@ -748,6 +753,7 @@ DECLOC::= LOC SEP TYPES:tloc SEP IDENTIFIER:ID EQ VALUE:v ENDLINE {:
                                                                         
                                                                             String baseTemp = "t";
                                                                             String miTempId = baseTemp + currentTemp++;
+                                                                            cod3D.append("\nlocal_data_" + tloc.toString() + " " + ID.toString());
                                                                             cod3D.append("\n" + miTempId + " = " + info[1]);
                                                                             cod3D.append("\n" + ID.toString() + " = " + miTempId);
                                                                             }
@@ -949,9 +955,18 @@ INV_ARRAY ::= IDENTIFIER:ID PARENTCA INTEGER_LITERAL:i PARENTCC {:  RESULT = ID.
 VALUE_LIST ::= VALUE:v COMA VALUE_LIST:vl {:
                                             String[] info1 = v.toString().split(":"); 
                                             String[] info2 = vl.toString().split(":"); 
-                                            if(info1[0].toString().equals(info2[0])) { RESULT = v.toString(); }
+                                            if(info1[0].toString().equals(info2[0])) { 
+                                                RESULT = v.toString(); 
+                                                String baseTemp = "t";
+                                                String miTempId = baseTemp + currentTemp++;
+                                                cod3D.append("\nArrayElement " + miTempId + " = " + info1[1]);
+                                            }
                                             else { RESULT = "null:null"; } :} 
-               | VALUE:v {: RESULT = v; :} ;
+               | VALUE:v {: RESULT = v; 
+                            String[] info1 = v.toString().split(":"); 
+                            String baseTemp = "t";
+                            String miTempId = baseTemp + currentTemp++;
+                            cod3D.append("\nArrayElement " + miTempId + " = " + info1[1]);:} ;
 
 
 PRINTLN ::= PRINTF PARENTA PARENTC ENDLINE;
