@@ -29,9 +29,11 @@ parser code {:
     int currentWhile = 1;
     int currentFor = 1;
     int currentSwitch = 1;
+    int currentCase = 1;
+    boolean firstCase = true;
 
-    boolean currentSwitchFlag = 1;
-    int currentSwitchValue = 1;
+    int currentSwitchFlag = 1;
+    String currentSwitchValue = "";
 
     String currentWhileCon = "";
 
@@ -242,8 +244,8 @@ terminal            ENDLINE, BOOOLEANF, COMA;
 
 /* Non-terminals */
 non terminal String PROGRAMA, BODY, STATEMENT, EXP, ASIG, FUNCTION_STATEMENT, EXP_ARIT, VALUE, NUMBERS, EXP_REL, BOOL, LINE, FOR_STATEMENT, WHILE_STATEMENT, IF_STATEMENT, ELSE_STATEMENT, LINER, TERM, FACTOR, OPER_REL, EXP_REL_LOG;
-non terminal String EXP_LOG, OPER_LOG, OPERA_LOG, DECL, DECLOC, TYPES, INV_FUNC, PARAMS, PARAMETER, INV_ARRAY, VALUE_LIST, SWITCH_STATEMENT, CASE_LIST, PARAMDECL, EXP_ARIT_INTEGER, TERM_INTEGER, FACTOR_INTEGER;
-non terminal String PRINTLN, RETURN_STATEMENT, FUNC_STAT_DEF, BREAK_STATEMENT, INPUT_STATEMENT, IF_STATEMENT_DEF, IF_STATEMENT_CONTENT, ELSE_STATEMENT_CONTENT, WHILE_STATEMENT_DEF, FOR_STATEMENT_DEF, SWITCH_STATEMENT_DEF;
+non terminal String EXP_LOG, OPER_LOG, OPERA_LOG, DECL, DECLOC, TYPES, INV_FUNC, PARAMS, PARAMETER, INV_ARRAY, VALUE_LIST, SWITCH_STATEMENT, CASE_LIST, PARAMDECL, EXP_ARIT_INTEGER, TERM_INTEGER, FACTOR_INTEGER, CASE_LIST_DEF;
+non terminal String PRINTLN, RETURN_STATEMENT, FUNC_STAT_DEF, BREAK_STATEMENT, INPUT_STATEMENT, IF_STATEMENT_DEF, IF_STATEMENT_CONTENT, ELSE_STATEMENT_CONTENT, WHILE_STATEMENT_DEF, FOR_STATEMENT_DEF, SWITCH_STATEMENT_DEF, DECLENDCASE;
 
 /* Precedences */
 precedence left PLUS, MINUS;
@@ -283,7 +285,7 @@ LINER::=
       | PARAMDECL
       | PRINTLN
       | RETURN_STATEMENT
-      | BREAK_STATEMENT
+      | BREAK_STATEMENT //{: System.out.println("\n============================================================================"); :}
       | INPUT_STATEMENT;
 
 //===============================================================================Expresiones Aritmeticas==================================================================
@@ -1037,13 +1039,15 @@ FOR_STATEMENT_DEF ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT:exp1 
                                                                     String[] info = exp1.toString().split(":");
                                                                     if (info[0].equals("int")) {
                                                                         cod3D.append("\n\nbegin_for_" + currentFor++ +  ":");
-                                                                        cod3D.append("\ncant " + info[1]);
+                                                                        cod3D.append("\ndataint cant");
+                                                                        cod3D.append("\ndataint cont");
+                                                                        cod3D.append("\ncant =" + info[1]);
                                                                         cod3D.append("\ncont = 0");
 
                                                                     } else {
                                                                         System.out.println("Parser: Err: El valor de los parametros del for deben ser enteros.");
                                                                     }
-                                                                    RESULT = info[1];
+                                                                    RESULT = info[1] + ":null";
                                                                     :};
 
 FOR_STATEMENT_DEF ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT:exp1 COMA EXP_ARIT:exp2 PARENTC {: 
@@ -1051,13 +1055,16 @@ FOR_STATEMENT_DEF ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT:exp1 
                                                                     String[] info2 = exp2.toString().split(":");
                                                                     if (info1[0].equals("int") && info2[0].equals("int")) {
                                                                         cod3D.append("\n\nbegin_for_" + currentFor++ +  ":");
+                                                                        cod3D.append("\ndataint cant");
+                                                                        cod3D.append("\ndataint cont");
+                                                                        cod3D.append("\ndataint init");
                                                                         cod3D.append("\ncant " + info1[1]);
                                                                         cod3D.append("\ncont = 0");
                                                                         cod3D.append("\ninit " + info2[1]);
                                                                     } else {
                                                                         System.out.println("Parser: Err: El valor de los parametros del for deben ser enteros.");
                                                                     }
-                                                                    RESULT = info1[1];
+                                                                    RESULT = info1[1] + ":null";
                                                                     :};
 
 FOR_STATEMENT_DEF ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT:exp1 COMA EXP_ARIT:exp2 COMA EXP_ARIT:exp3 PARENTC {: 
@@ -1066,35 +1073,96 @@ FOR_STATEMENT_DEF ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTA EXP_ARIT:exp1 
                                                                     String[] info3 = exp3.toString().split(":");
                                                                     if (info1[0].equals("int") && info2[0].equals("int") && info3[0].equals("int")) {
                                                                         cod3D.append("\n\nbegin_for_" + currentFor++ +  ":");
-                                                                        cod3D.append("\ncant " + info1[1]);
+                                                                        
+                                                                        cod3D.append("\ndataint cant");
+                                                                        cod3D.append("\ndataint cont");
+                                                                        cod3D.append("\ndataint init");
+                                                                        cod3D.append("\ndataint jump");
+
+                                                                        cod3D.append("\ncant =" + info1[1]);
                                                                         cod3D.append("\ncont = " + info2[1]);
-                                                                        cod3D.append("\ninit " + info2[1]);
-                                                                        cod3D.append("\njump " + info3[1]);
+                                                                        cod3D.append("\ninit =" + info2[1]);
+                                                                        cod3D.append("\njump =" + info3[1]);
                                                                     } else {
                                                                         System.out.println("Parser: Err: El valor de los parametros del for deben ser enteros.");
                                                                     }
-                                                                    RESULT = info1[1];
+                                                                    RESULT = info1[1] + ":" + info3[1];
                                                                     :};
 
 
 FOR_STATEMENT ::= FOR_STATEMENT_DEF:fsd UNDERS LINE UNDERS {:
-                                                            cod3D.append("\nif " + fsd.toString() +  " != cont goto begin_for_" + (currentFor - 1));
-                                                            cod3D.append("\ngoto end_for_" + (currentFor - 1));
-                                                            cod3D.append("\nend_for_" + (currentFor - 1) +  ":");
+                                                            String[] info = fsd.toString().split(":");
+                                                            if(info[1].equals("null")) {
+                                                                cod3D.append("\nt" +  currentTemp++ + " = 1");
+                                                                cod3D.append("\nt" +  currentTemp++ + " = " + info[0] +  " + t" + (currentTemp - 2));
+                                                                cod3D.append("\n" +  info[0] + " = t" + (currentTemp - 1));
+                                                                cod3D.append("\nif " + info[0] +  " != cont goto begin_for_" + (currentFor - 1));
+                                                                cod3D.append("\ngoto end_for_" + (currentFor - 1));
+                                                                cod3D.append("\nend_for_" + (currentFor - 1) +  ":");
+                                                            } else {
+                                                                cod3D.append("\nt" +  currentTemp++ + " = " + info[0] +  " + " + info[1]);
+                                                                cod3D.append("\n" +  info[0] + " = " + (currentTemp - 1));
+                                                                cod3D.append("\nif " + info[0] +  " != cont goto begin_for_" + (currentFor - 1));
+                                                                cod3D.append("\ngoto end_for_" + (currentFor - 1));
+                                                                cod3D.append("\nend_for_" + (currentFor - 1) +  ":");
+                                                            }
 
                                                             :};
 
 
 SWITCH_STATEMENT ::=  SWITCH_STATEMENT_DEF UNDERS CASE_LIST UNDERS;
 
-SWITCH_STATEMENT_DEF ::= SWITCH PARENTA IDENTIFIER:id PARENTC {:
-                                                            cod3D.append("\n\nbegin_switch_" + currentSwitch++ +  ":");
-                                                            cod3D.append("\nt" + currentTemp++ +  " = " + id.toString());
+SWITCH_STATEMENT_DEF ::= SWITCH PARENTA EXP_ARIT:exp PARENTC {:
+                                                            String[] info = exp.toString().split(":");
+                                                            currentCase = 1;
+                                                            //validarScopeVariablesGlobales
+                                                            //validarScopeVariables
+                                                            if(info[0].equals("int")) {
+                                                                cod3D.append("\n\nbegin_switch_" + currentSwitch++ +  ":");
+                                                                cod3D.append("\nt" + currentTemp++ +  " = " + info[1]);
+                                                                currentSwitchValue = info[1];
+                                                                cod3D.append("\ndataint flag");
+                                                                cod3D.append("\nt" +  currentTemp++ + " = 0");
+                                                                cod3D.append("\nflag = " + "t" + (currentTemp - 1));
+                                                            } else {
+                                                                System.out.println("Parser: Err: El resultado de la expresion o identificador de un switch debe ser entero");
+                                                            }
                                                             :}; //currentSwitch
 
-CASE_LIST ::= CASE EXP_ARIT SEP LINE CASE_LIST | CASE EXP_ARIT SEP LINE | DEFAULT SEP LINE | DEFAULT SEP;
+CASE_LIST ::=  CASE_LIST_DEF:csd LINE DECLENDCASE CASE_LIST {:
+                                            String[] info = csd.toString().split(":");
+                                            if(info[0].equals("null")) {
+                                                System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero.");
+                                            } 
+                                            :} 
+              | CASE_LIST_DEF:csd LINE {:
+                                    String[] info = csd.toString().split(":");
+                                    if(info[0].equals("null")) {
+                                        System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero.");
+                                    }
+                                    :}
+              |DEFAULT SEP LINE {: :}
+              |DEFAULT SEP {: :};
 
+DECLENDCASE ::= {:
+                cod3D.append("\ngoto end_case_" + (currentSwitch - 1) + (currentCase - 1));
+                :};
 
+CASE_LIST_DEF ::= CASE SEP EXP_ARIT:exp SEP {:
+                                        String[] info = exp.toString().split(":");
+                                        if(info[0].equals("int")) {
+                                            cod3D.append("\nif " + info[1] + "==" + currentSwitchValue + " goto begin_case_" + (currentSwitch - 1) + currentCase++);
+                                            cod3D.append("\ngoto end_case_" + (currentSwitch - 1) + (currentCase - 1));
+
+                                            cod3D.append("\n\nbegin_case_" + (currentSwitch - 1) + (currentCase - 1));
+                                            cod3D.append("\nt" + currentTemp +  " = " +  "1");
+                                            cod3D.append("\nflag" + " = " + currentTemp++);
+                                            RESULT = (currentSwitch - 1) +  ":" + (currentCase - 1);
+                                        } else {
+                                            System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero.");
+                                            RESULT = "null:null";
+                                        }
+                                        :} ;
 
 //===============================================================================Estructuras de control End==================================================================
 
@@ -1110,7 +1178,7 @@ RETURN_STATEMENT ::=  RETURN SEP VALUE:v ENDLINE {:
                                                     System.out.println("Parser: Err: El tipo de retorno no es compatible con el tipo de la funcion."); 
                                                 }:};
 
-BREAK_STATEMENT ::=  BREAK ENDLINE;
+BREAK_STATEMENT ::=  BREAK ENDLINE {: cod3D.append("\ngoto end_switch_" + (currentSwitch - 1));  :};
 
 
 //===============================================================================Return==================================================================

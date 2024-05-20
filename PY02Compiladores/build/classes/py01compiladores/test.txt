@@ -24,11 +24,12 @@ func:bool:func2_
             loc:bool:condition = pi; // Por ejemplo, establecer la condición como falsa para salir del bucle
             return: true;
         _
-        switch(x) _
-            case 1:
+        switch(5) _
+            case:1:
                 // código para caso 1
+                print("43refd");
                 break;
-            case 2:
+            case:2:
                 // código para caso 2
                 break;
             default:
@@ -40,7 +41,7 @@ _
 
 
 func:int:main_ 
-                for:i:in:range(8)_ print(i); _
+                for:i:in:range(8, 4, 5)_ print(i); _
                 loc:string:miChar='!';
                 loc:string:str1= "Mi string 1";
                 glob:string:str2="Mi string 1wewewew";

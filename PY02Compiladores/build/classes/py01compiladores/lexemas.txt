@@ -123,15 +123,22 @@ Token: 55 ;
 Token: 54 _
 Token: 39 switch
 Token: 50 (
-Token: 11 x
+Token: 10 5
 Token: 51 )
 Token: 54 _
 Token: 40 case
+Token: 25 :
 Token: 10 1
 Token: 25 :
+Token: 44 print
+Token: 50 (
+Token: 12 43refd
+Token: 51 )
+Token: 55 ;
 Token: 15 break
 Token: 55 ;
 Token: 40 case
+Token: 25 :
 Token: 10 2
 Token: 25 :
 Token: 15 break
@@ -159,6 +166,10 @@ Token: 25 :
 Token: 38 range
 Token: 50 (
 Token: 10 8
+Token: 57 ,
+Token: 10 4
+Token: 57 ,
+Token: 10 5
 Token: 51 )
 Token: 54 _
 Token: 44 print
@@ -499,4 +510,4 @@ Token: 25 :
 Token: 11 b1
 Token: 55 ;
 Token: 54 _
-Cantidad de lexemas encontrados: 501
+Cantidad de lexemas encontrados: 512
