@@ -29,10 +29,12 @@ func:bool:func2_
                 // código para caso 1
                 print("43refd");
                 break;
+                
             case:2:
                 // código para caso 2
-                break;
+                print("dsd");
             default:
+                print("dsds");
                 // código para el caso predeterminado
         _
 

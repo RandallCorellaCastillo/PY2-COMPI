@@ -141,10 +141,18 @@ Token: 40 case
 Token: 25 :
 Token: 10 2
 Token: 25 :
-Token: 15 break
+Token: 44 print
+Token: 50 (
+Token: 12 dsd
+Token: 51 )
 Token: 55 ;
 Token: 49 default
 Token: 25 :
+Token: 44 print
+Token: 50 (
+Token: 12 dsds
+Token: 51 )
+Token: 55 ;
 Token: 54 _
 Token: 43 return
 Token: 25 :
@@ -510,4 +518,4 @@ Token: 25 :
 Token: 11 b1
 Token: 55 ;
 Token: 54 _
-Cantidad de lexemas encontrados: 512
+Cantidad de lexemas encontrados: 520

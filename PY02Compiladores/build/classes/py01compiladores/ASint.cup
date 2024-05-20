@@ -30,6 +30,7 @@ parser code {:
     int currentFor = 1;
     int currentSwitch = 1;
     int currentCase = 1;
+    int currentDefault = 1;
     boolean firstCase = true;
 
     int currentSwitchFlag = 1;
@@ -1110,7 +1111,9 @@ FOR_STATEMENT ::= FOR_STATEMENT_DEF:fsd UNDERS LINE UNDERS {:
                                                             :};
 
 
-SWITCH_STATEMENT ::=  SWITCH_STATEMENT_DEF UNDERS CASE_LIST UNDERS;
+SWITCH_STATEMENT ::=  SWITCH_STATEMENT_DEF UNDERS CASE_LIST UNDERS {:
+                                                                    cod3D.append("\n\nend_switch_" + (currentSwitch - 1) +  ":");
+                                                                    :};
 
 SWITCH_STATEMENT_DEF ::= SWITCH PARENTA EXP_ARIT:exp PARENTC {:
                                                             String[] info = exp.toString().split(":");
@@ -1141,22 +1144,32 @@ CASE_LIST ::=  CASE_LIST_DEF:csd LINE DECLENDCASE CASE_LIST {:
                                         System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero.");
                                     }
                                     :}
-              |DEFAULT SEP LINE {: :}
-              |DEFAULT SEP {: :};
+              
+              |DEFAULT SEP LINE {:
+                                 cod3D.append("\n\nbegin_default_" + (currentSwitch - 1) + currentDefault + ":");
+                                :} //currentDefault
+              |DEFAULT SEP {:
+                            cod3D.append("\n\nbegin_default_" + (currentSwitch - 1) + currentDefault +  ":"); 
+                            :}
+              | error;
 
 DECLENDCASE ::= {:
-                cod3D.append("\ngoto end_case_" + (currentSwitch - 1) + (currentCase - 1));
+
+                cod3D.append("\nend_case_" + (currentSwitch - 1) + (currentCase - 1) + ":");
                 :};
 
 CASE_LIST_DEF ::= CASE SEP EXP_ARIT:exp SEP {:
                                         String[] info = exp.toString().split(":");
                                         if(info[0].equals("int")) {
+                                            cod3D.append("\nt" + currentTemp++ +  " = " +  "flag");
+                                            cod3D.append("\nt" + currentTemp++ +  " = " +  "1");
+                                            cod3D.append("\nif t"  + (currentTemp - 1) + " == t" + (currentTemp - 2) + " goto begin_case_" + (currentSwitch - 1) + currentCase);
                                             cod3D.append("\nif " + info[1] + "==" + currentSwitchValue + " goto begin_case_" + (currentSwitch - 1) + currentCase++);
                                             cod3D.append("\ngoto end_case_" + (currentSwitch - 1) + (currentCase - 1));
 
                                             cod3D.append("\n\nbegin_case_" + (currentSwitch - 1) + (currentCase - 1));
                                             cod3D.append("\nt" + currentTemp +  " = " +  "1");
-                                            cod3D.append("\nflag" + " = " + currentTemp++);
+                                            cod3D.append("\nflag" + " = t" + currentTemp++);
                                             RESULT = (currentSwitch - 1) +  ":" + (currentCase - 1);
                                         } else {
                                             System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero.");
