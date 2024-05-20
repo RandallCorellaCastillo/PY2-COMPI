@@ -150,6 +150,23 @@ Token: 27 int
 Token: 25 :
 Token: 46 main
 Token: 54 _
+Token: 36 for
+Token: 25 :
+Token: 11 i
+Token: 25 :
+Token: 37 in
+Token: 25 :
+Token: 38 range
+Token: 50 (
+Token: 10 8
+Token: 51 )
+Token: 54 _
+Token: 44 print
+Token: 50 (
+Token: 11 i
+Token: 51 )
+Token: 55 ;
+Token: 54 _
 Token: 42 loc
 Token: 25 :
 Token: 30 string
@@ -482,4 +499,4 @@ Token: 25 :
 Token: 11 b1
 Token: 55 ;
 Token: 54 _
-Cantidad de lexemas encontrados: 484
+Cantidad de lexemas encontrados: 501
