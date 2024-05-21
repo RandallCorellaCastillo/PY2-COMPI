@@ -931,6 +931,7 @@ return lex.next_token();
     public String getTipo(String id) {
         //prioridad al scope local
         ArrayList<String> scope1 = TablaSimbolos.get(currentHash);
+        if (scope1 == null){return "null";}
         for (String elemento1 : scope1) {
             String[] elementos = elemento1.split(":");
             if (elementos[1].trim().equals(id)) {
@@ -939,6 +940,7 @@ return lex.next_token();
         }
         //scope global
         ArrayList<String> scope2 = TablaSimbolos.get(globalHash);
+        if (scope2 != null){return "null";}
         for (String elemento2 : scope2) {
             String[] elementos = elemento2.split(":");
             if (elementos[1].trim().equals(id)) {
@@ -1001,6 +1003,7 @@ return lex.next_token();
 
     public int contarParametros (String id) throws Exception {
         ArrayList<String> scopeParams = TablaSimbolos.get(id);
+        if (scopeParams == null) {return -1;}
         int count = 0;
         for (String elemento : scopeParams) {
             String[] partes = elemento.split(":");
@@ -1013,6 +1016,7 @@ return lex.next_token();
     public boolean validarRetorno(String tipo) {
         // Verificar en el alcance local
         ArrayList<String> informacion = TablaSimbolos.get(currentHash);
+        if (informacion == null) {return false;}
         // Iterar sobre la lista de información
         for (String info : informacion) {
             // Imprimir la información
@@ -1031,6 +1035,7 @@ return lex.next_token();
     public String getTipoFunc(String id) {
         // Verificar en el alcance local
         ArrayList<String> informacion = TablaSimbolos.get(id);
+        if (informacion == null) {return "null";}
         //System.out.println(id);
         // Iterar sobre la lista de información
         for (String info : informacion) {
@@ -1660,7 +1665,7 @@ class CUP$Parser$actions {
                                                                         cod3D.append("\n" + miTempId + "=" + i.toString());
                                                                         RESULT = tipo +  ":" + miTempId;
                                                                     }
-                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null:null"; } 
+                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null:null"; System.exit(0);} 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FACTOR",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2370,10 +2375,13 @@ class CUP$Parser$actions {
 		int vright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).right;
 		String v = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		 
-                                    if (!validarUsoVariable(ID.toString())) {
-                                        System.out.println("Parser: Err : Variable: " + ID.toString() + " no declarada.");
-                                        
-                                    } 
+                                    String[] tipoAsig = v.split(":");
+                                    String tipovar = getTipo(ID.toString());
+                                    if (validarUsoVariable(ID.toString())) {
+                                        if(!tipovar.equals(tipoAsig[0])){
+                                            System.out.println("Parser: Err : Asignacion: " + ID.toString() + " tipos no compatibles.");
+                                        }
+                                    } else {System.out.println("Parser: Err : Variable: " + ID.toString() + " no declarada.");}
                                     String[] info = v.toString().split(":");
                                     String baseTemp = "t";
                                     String miTempId = baseTemp + currentTemp++;

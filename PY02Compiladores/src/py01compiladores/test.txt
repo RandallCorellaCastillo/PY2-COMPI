@@ -1,81 +1,48 @@
-glob:char:pi1;
+glob:char:pi;glob:int:pi;/*semantico*/
 glob:bool:pi;/*semantico*/
-glob:bool:pi2;/*semantico*/
-glob:string:pi31;/*semantico*/
-glob:string:pi6 = 'HOL';
-glob:int:in1 = 7;
-glob:bool:pi7 = true;
-glob:string:pi8 = "dxcx";
-glob:int:var = 7;
-//glob:int:pi = (randall || eandal && randall && (5+6 >6));
-//
-
-func:bool:func2_
-        param:int:x22;
-        print(i);
-        var = 12;
-        x22--;
-        x22++;
-        while (!(x22<=45)&&var>5) _
-            // Cuerpo del bucle
-            print("El bucle 'while' está en ejecución.");
-
-            // Modificar la condición de alguna manera para que el bucle termine eventualmente
-            loc:bool:condition = pi; // Por ejemplo, establecer la condición como falsa para salir del bucle
-            return: true;
-        _
-        switch(5) _
-            case:1:
-                // código para caso 1
-                print("43refd");
-                break;
-                
-            case:2:
-                // código para caso 2
-                print("dsd");
-            default:
-                print("dsds");
-                // código para el caso predeterminado
-        _
-
-	return: false;
-_
+glob:string:pi;/*semantico*/
+glob:char:pi;
+glob:int:pi = 'HOLA';
+glob:bool:pi = true;
+glob:string:pi = "dxcx";
+glob:int:pi = (randall || eandal && randall && (5+6 >6));
 
 
 func:int:main_ 
-                for:i:in:range(8, 4, 5)_ print(i); _
-                loc:string:miChar='!';
-                loc:string:str1= "Mi string 1";
-                glob:string:str2="Mi string 1wewewew";
-                glob:string:str3;
-                loc:int:fl1;
-                loc:float:fl21= 45.3 * 4.5 + 5.1; //semantico fl1
-                loc:float:fl213= 45.3 / 4.5; //semantico fl1
-                
-                if(true && false)_ print(pi6); _
-                if(var<=45&&var>5)_ print(pi6);_
-                if(true && false)_print(pi6);_ else _ print(pi6); _
-                loc:int:hola[12] = [1,2,3, 6];
-                loc:float:hola1 = 32.3;
-                loc:bool:bl1 = in1 >= fl1 || false && func2(3, in1 > hola[5]); //semantico in1 >= fl1, func2
+                loc:char:miChar='!';
+                loc:string:str1="Mi string 1";
+                loc:float:fl1;
+                loc:float:fl1=56.6; //semantico fl1
+                cos = "df";
+                cant = 56*5234;
+                cos = 5 < 7;
+                if(x22<=45&&var>5.6)_cos = 5 < 7;_
+                if(miFunc(randall, "a", randall[5]))_cos = 5 < 7;_ else _ cos = 12; _
+                loc:char:hola[12];
                 for:i:in:range(10,20,30)_
-                    print(i);
+                    println(i);
                 _
-                return:6;
+                return;
 _
-func:int:fun1_  return:4; _
-func:int:fun3_  return:4; _
+func:int:fun1_ cos = "df"; return; _
+func:int:fun3_ cos = "df"; return;_
 
+glob:char:pi;
+glob:int:pi;/*semantico*/
+glob:bool:pi;/*semantico*/
+glob:string:pi;/*semantico*/
+glob:float:pi;/*semantico*/
 
 func:float:func1 _
-	param:int:x22;
-        param:int:x223;
-        param:int:x2234;
-	if(!(x22<=45)&&var>5)_ //semantico x22, var
+	param:char:x22;
+	param:char:x22; //semantico borrar parametro
+        param:int:x22; //semantico borrar parametro
+	loc:char:x22; /*semantico x22*/
+	if(!(x22<=45)&&var>5.6)_ //semantico x22, var
 		glob:int:y;
 		x22=10;
-		loc:string:ch33="";
-                return:5.3; //semantico
+		loc:char:ch33="";
+                return; //semantico
 	_else_
 		loc:int:y;//no error o no???
 		loc:string:str2="sdff";
@@ -83,13 +50,62 @@ func:float:func1 _
 	_
         print(i);
 	for:i:in:range(5)_ print(i); _
-	return:14.2;//cambio en retorno genera semantico*/
+	return;//cambio en retorno genera semantico*/
 _
 
 
+func:bool:func2_
+        param:char:x22;
+        print(i);
+        while (!(x22<=45)&&var>5.6) _
+            // Cuerpo del bucle
+            println("El bucle 'while' está en ejecución.");
+
+            // Modificar la condición de alguna manera para que el bucle termine eventualmente
+            loc:bool:condition = pi; // Por ejemplo, establecer la condición como falsa para salir del bucle
+            return: hola;
+        _
+        switch(x) _
+            case 1:
+                // código para caso 1
+                break;
+            case 2:
+                // código para caso 2
+                break;
+            default:
+                // código para el caso predeterminado
+        _
+
+	return: -(-5.9);
+_
 
 
 func:string:func3_ //semantico string
 	loc:string:b1;
 	return:b1; 
+_
+
+func:int:main_
+/*
+Comentario 1
+*/
+	loc:char:miChar="!";
+	loc:char:miChar2="!!"; //sintactico
+	loc:string:str1="Mi string 1";
+	loc:float:fl1;
+	loc:float:fl1=56.6; //semantico fl1
+	loc:int:in1=fl1-- - -14/in1+++7-15; //semantico fl1, in1
+	loc:float:fl2=3.7^fl1+(45.6%76); //semantico literal 76
+        break;
+        read(randal);
+	
+//comentario 2
+	arr = 10 - arr[67] * func1 (hola, true, "hola mundo", 4.5, "a"); //semantico func1, retorno func1
+	fl1 = 4.5%miChar^-0.005; //semantico miChar
+	miFunc(miFunc(),"a"); //semantico miFunc, hola
+	loc:bool:bl0 = 6.7 != 8.9; //ok
+	loc:bool:bl1 = in1 >= fl1 || false && not(func2(3,in1) > 56); //semantico in1 >= fl1, func2
+        
+        randall++;
+	return : bl1; //semantico
 _

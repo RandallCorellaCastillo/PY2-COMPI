@@ -18,12 +18,15 @@ parser code {:
     
     HashMap<String, ArrayList<String>> TablaSimbolos = new HashMap<String, ArrayList<String>>();
     HashMap<String, Integer> cantidadParametros = new HashMap<>();
+    int contar = 0;
     String currentHash;
     String globalHash = "globalTS";
+    ArrayList<String> paramlist = new ArrayList<>();
     boolean flagMain = false;
 
     StringBuffer cod3D = new StringBuffer();
     int currentTemp = 1;
+    int currentParam = 0;
     int currentIf = 1;
     int currentElse = 1;
     int currentWhile = 1;
@@ -97,6 +100,7 @@ parser code {:
     public String getTipo(String id) {
         //prioridad al scope local
         ArrayList<String> scope1 = TablaSimbolos.get(currentHash);
+        if (scope1 == null){return "null";}
         for (String elemento1 : scope1) {
             String[] elementos = elemento1.split(":");
             if (elementos[1].trim().equals(id)) {
@@ -105,6 +109,7 @@ parser code {:
         }
         //scope global
         ArrayList<String> scope2 = TablaSimbolos.get(globalHash);
+        if (scope2 != null){return "null";}
         for (String elemento2 : scope2) {
             String[] elementos = elemento2.split(":");
             if (elementos[1].trim().equals(id)) {
@@ -167,6 +172,7 @@ parser code {:
 
     public int contarParametros (String id) throws Exception {
         ArrayList<String> scopeParams = TablaSimbolos.get(id);
+        if (scopeParams == null) {return -1;}
         int count = 0;
         for (String elemento : scopeParams) {
             String[] partes = elemento.split(":");
@@ -176,9 +182,25 @@ parser code {:
         return count;
     }
 
+    public void identParam (String id) throws Exception {
+        ArrayList<String> scopeParams = TablaSimbolos.get(id);
+        paramlist.clear();
+        if (scopeParams == null) {
+
+        }
+        else{
+            for (String elemento : scopeParams) {
+                String[] partes = elemento.split(":");
+                String idComp = partes[0].trim();
+                if(idComp.equals("parametro") ){ paramlist.add(partes[2]);}
+            }
+        }
+    }
+
     public boolean validarRetorno(String tipo) {
         // Verificar en el alcance local
         ArrayList<String> informacion = TablaSimbolos.get(currentHash);
+        if (informacion == null) {return false;}
         // Iterar sobre la lista de información
         for (String info : informacion) {
             // Imprimir la información
@@ -197,6 +219,7 @@ parser code {:
     public String getTipoFunc(String id) {
         // Verificar en el alcance local
         ArrayList<String> informacion = TablaSimbolos.get(id);
+        if (informacion == null) {return "null";}
         //System.out.println(id);
         // Iterar sobre la lista de información
         for (String info : informacion) {
@@ -245,7 +268,7 @@ terminal            ENDLINE, BOOOLEANF, COMA;
 
 /* Non-terminals */
 non terminal String PROGRAMA, BODY, STATEMENT, EXP, ASIG, FUNCTION_STATEMENT, EXP_ARIT, VALUE, NUMBERS, EXP_REL, BOOL, LINE, FOR_STATEMENT, WHILE_STATEMENT, IF_STATEMENT, ELSE_STATEMENT, LINER, TERM, FACTOR, OPER_REL, EXP_REL_LOG;
-non terminal String EXP_LOG, OPER_LOG, OPERA_LOG, DECL, DECLOC, TYPES, INV_FUNC, PARAMS, PARAMETER, INV_ARRAY, VALUE_LIST, SWITCH_STATEMENT, CASE_LIST, PARAMDECL, EXP_ARIT_INTEGER, TERM_INTEGER, FACTOR_INTEGER, CASE_LIST_DEF;
+non terminal String EXP_LOG, OPER_LOG, OPERA_LOG, DECL, DECLOC, TYPES, INV_FUNC, INV_FUNC_DEF, PARAMS, PARAMETER, INV_ARRAY, VALUE_LIST, SWITCH_STATEMENT, CASE_LIST, PARAMDECL, EXP_ARIT_INTEGER, TERM_INTEGER, FACTOR_INTEGER, CASE_LIST_DEF;
 non terminal String PRINTLN, RETURN_STATEMENT, FUNC_STAT_DEF, BREAK_STATEMENT, INPUT_STATEMENT, IF_STATEMENT_DEF, IF_STATEMENT_CONTENT, ELSE_STATEMENT_CONTENT, WHILE_STATEMENT_DEF, FOR_STATEMENT_DEF, SWITCH_STATEMENT_DEF, DECLENDCASE;
 
 /* Precedences */
@@ -440,7 +463,7 @@ FACTOR  ::=  PARENTA EXP_ARIT:e PARENTC {:RESULT = e;:}
                                                                         cod3D.append("\n" + miTempId + "=" + i.toString());
                                                                         RESULT = tipo +  ":" + miTempId;
                                                                     }
-                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null:null"; } :}
+                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null:null";} :} //System.exit(0);} :}
 
             | IDENTIFIER:i MINUSM {: String tipo = getTipo(i.toString()); if(validarUsoVariable(i.toString())) {
                                                                                 String baseTemp = "t";
@@ -472,7 +495,8 @@ FACTOR  ::=  PARENTA EXP_ARIT:e PARENTC {:RESULT = e;:}
                                                                     else { System.out.println("Parser: Err: La variable no existe: " + i.toString());  RESULT = "null:null";} :}
 
             | INV_FUNC:f {:
-                           
+                           contar = 0;
+                           currentParam = 0;
                            String[] info = f.toString().split(":");
                            String baseTemp = "t";
                            String miTempId = baseTemp + currentTemp++;
@@ -524,7 +548,7 @@ FACTOR_INTEGER  ::=  PARENTA EXP_ARIT_INTEGER PARENTC
                                 } 
                             :}
             | MINUS NUMBERS
-            | INV_FUNC
+            | INV_FUNC {: contar = 0; currentParam = 0; :}
             | INV_ARRAY;
 
 //===============================================================================Expresiones Aritmeticas End==================================================================
@@ -691,10 +715,13 @@ OPERA_LOG ::= DISJUNTION:d {:RESULT = "bool:" +  d;:} | CONJUNTION:c {:RESULT = 
 //Asignacion de valores a una variable.
 ASIG::= IDENTIFIER:ID EQ VALUE:v ENDLINE
                                 {: 
-                                    if (!validarUsoVariable(ID.toString())) {
-                                        System.out.println("Parser: Err : Variable: " + ID.toString() + " no declarada.");
-                                        
-                                    } 
+                                    String[] tipoAsig = v.split(":");
+                                    String tipovar = getTipo(ID.toString());
+                                    if (validarUsoVariable(ID.toString())) {
+                                        if(!tipovar.equals(tipoAsig[0])){
+                                            System.out.println("Parser: Err : Asignacion: " + ID.toString() + " tipos no compatibles.");
+                                        }
+                                    } else {System.out.println("Parser: Err : Variable: " + ID.toString() + " no declarada.");}
                                     String[] info = v.toString().split(":");
                                     String baseTemp = "t";
                                     String miTempId = baseTemp + currentTemp++;
@@ -929,10 +956,10 @@ FUNC_STAT_DEF ::= FUNCTION_STATEMENT:fs UNDERS LINE UNDERS
 
 
 INV_FUNC ::= IDENTIFIER:ID PARENTA PARENTC
-                                        {: 
+                                        {:
                                             RESULT = ID.toString()  + ":" + getTipoFunc(ID.toString());
                                             if (validarFuncionExistente(ID.toString())) {
-                                                int parametrosEsperados = cantidadParametros.getOrDefault(ID.toString(), -1);
+                                                int parametrosEsperados = contar;
                                                 if (parametrosEsperados != 0) {
                                                     System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros.");
                                                 }
@@ -941,29 +968,38 @@ INV_FUNC ::= IDENTIFIER:ID PARENTA PARENTC
                                             }
                                         :};
 
-INV_FUNC ::= IDENTIFIER:ID PARENTA PARAMS:cparam PARENTC
-                                            {: 
-                                                RESULT = ID.toString()  + ":" + getTipoFunc(ID.toString());
-                                                if (validarFuncionExistente(ID.toString())) {
-                                                    int parametrosEsperados = cantidadParametros.getOrDefault(ID.toString(), -1);
-                                                    if (cparam != null) {
-                                                        int parametrosRecibidos = contarParametrosInvocados(cparam);
-                                                        if (parametrosEsperados != parametrosRecibidos) {
-                                                            System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros, pero se pasaron " + parametrosRecibidos + ".");
-                                                        }
-                                                    } else {
-                                                        System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros, pero no se pasaron.");
-                                                    }
-                                                } else {
-                                                    System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida.");
-                                                }
-                                            :};
+INV_FUNC ::= INV_FUNC_DEF:in PARAMS:cparam PARENTC{: RESULT = in; :};
+                                            
+INV_FUNC_DEF ::= IDENTIFIER:ID PARENTA
+                                    {:  
+                                        RESULT = ID.toString()  + ":" + getTipoFunc(ID.toString());
+                                        currentParam = 0;
+                                        if (validarFuncionExistente(ID.toString())) {
+                                            int parametrosEsperados = contarParametros(ID.toString());
+                                            int parametrosRecibidos = contar;
+                                            identParam(ID.toString());
+                                            if (parametrosEsperados != parametrosRecibidos) {
+                                                System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros, pero se pasaron " + parametrosRecibidos + ".");
+                                            }
+                                        } else {
+                                            System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida.");
+                                        }
+                                    
+                                    :};
 
+PARAMS ::= PARAMETER:v COMA PARAMS
+                                {:
+                                    String[] info = v.toString().split(":");
+                                    if (currentParam < paramlist.size()){
+                                        if( !(info[0].equals(paramlist.get(currentParam)))){
+                                        System.out.println("Parser: Err : Los parametros no son compatibles");
+                                        } 
+                                        currentParam++;
+                                    } else{System.out.println("Parser: Err : Cantidad de parametros incompatible");}
+                                :};
+PARAMS ::= PARAMETER:v;
 
-PARAMS ::= PARAMETER COMA PARAMS;
-PARAMS ::= PARAMETER;
-
-PARAMETER ::= VALUE;
+PARAMETER ::= VALUE:v{: contar++; RESULT = v; :};
 
 PARAMDECL ::= PARAM SEP TYPES:tparam SEP IDENTIFIER:ID ENDLINE {: 
                                                                 TablaSimbolos.get(currentHash).add("parametro : "+ ID.toString() + ":" + tparam.toString());
@@ -1205,4 +1241,3 @@ BREAK_STATEMENT ::=  BREAK ENDLINE {: cod3D.append("\ngoto end_switch_" + (curre
 
 
 //===============================================================================Return==================================================================
-

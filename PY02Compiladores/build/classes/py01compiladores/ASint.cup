@@ -11,7 +11,7 @@ import java.io.BufferedWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+hola
 parser code {:
     // Connect this parser to a scanner!
     Lexer lex;
@@ -97,6 +97,7 @@ parser code {:
     public String getTipo(String id) {
         //prioridad al scope local
         ArrayList<String> scope1 = TablaSimbolos.get(currentHash);
+        if (scope1 == null){return "null";}
         for (String elemento1 : scope1) {
             String[] elementos = elemento1.split(":");
             if (elementos[1].trim().equals(id)) {
@@ -105,6 +106,7 @@ parser code {:
         }
         //scope global
         ArrayList<String> scope2 = TablaSimbolos.get(globalHash);
+        if (scope2 != null){return "null";}
         for (String elemento2 : scope2) {
             String[] elementos = elemento2.split(":");
             if (elementos[1].trim().equals(id)) {
@@ -167,6 +169,7 @@ parser code {:
 
     public int contarParametros (String id) throws Exception {
         ArrayList<String> scopeParams = TablaSimbolos.get(id);
+        if (scopeParams == null) {return -1;}
         int count = 0;
         for (String elemento : scopeParams) {
             String[] partes = elemento.split(":");
@@ -179,6 +182,7 @@ parser code {:
     public boolean validarRetorno(String tipo) {
         // Verificar en el alcance local
         ArrayList<String> informacion = TablaSimbolos.get(currentHash);
+        if (informacion == null) {return false;}
         // Iterar sobre la lista de información
         for (String info : informacion) {
             // Imprimir la información
@@ -197,6 +201,7 @@ parser code {:
     public String getTipoFunc(String id) {
         // Verificar en el alcance local
         ArrayList<String> informacion = TablaSimbolos.get(id);
+        if (informacion == null) {return "null";}
         //System.out.println(id);
         // Iterar sobre la lista de información
         for (String info : informacion) {
@@ -440,7 +445,7 @@ FACTOR  ::=  PARENTA EXP_ARIT:e PARENTC {:RESULT = e;:}
                                                                         cod3D.append("\n" + miTempId + "=" + i.toString());
                                                                         RESULT = tipo +  ":" + miTempId;
                                                                     }
-                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null:null"; } :}
+                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString()); RESULT = "null:null"; System.exit(0);} :}
 
             | IDENTIFIER:i MINUSM {: String tipo = getTipo(i.toString()); if(validarUsoVariable(i.toString())) {
                                                                                 String baseTemp = "t";
@@ -691,10 +696,13 @@ OPERA_LOG ::= DISJUNTION:d {:RESULT = "bool:" +  d;:} | CONJUNTION:c {:RESULT = 
 //Asignacion de valores a una variable.
 ASIG::= IDENTIFIER:ID EQ VALUE:v ENDLINE
                                 {: 
-                                    if (!validarUsoVariable(ID.toString())) {
-                                        System.out.println("Parser: Err : Variable: " + ID.toString() + " no declarada.");
-                                        
-                                    } 
+                                    String[] tipoAsig = v.split(":");
+                                    String tipovar = getTipo(ID.toString());
+                                    if (validarUsoVariable(ID.toString())) {
+                                        if(!tipovar.equals(tipoAsig[0])){
+                                            System.out.println("Parser: Err : Asignacion: " + ID.toString() + " tipos no compatibles.");
+                                        }
+                                    } else {System.out.println("Parser: Err : Variable: " + ID.toString() + " no declarada.");}
                                     String[] info = v.toString().split(":");
                                     String baseTemp = "t";
                                     String miTempId = baseTemp + currentTemp++;
@@ -1205,4 +1213,3 @@ BREAK_STATEMENT ::=  BREAK ENDLINE {: cod3D.append("\ngoto end_switch_" + (curre
 
 
 //===============================================================================Return==================================================================
-
