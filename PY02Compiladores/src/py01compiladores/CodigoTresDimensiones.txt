@@ -1,0 +1,188 @@
+
+
+begin_globals_:
+global_data_String pi
+global_data_int pi2
+global_data_bool pi3
+global_data_String pi4
+global_data_float pi6
+
+begin_func_func1:
+Param x22
+Param x22
+f1= -1
+f2=001
+f3=f1 * f2
+local_data_float x
+t4 = f3
+x = t4
+t5=!
+local_data_String miChar
+t6 = t5
+miChar = t6
+t7=!!
+local_data_String miChar2
+t8 = t7
+miChar2 = t8
+t9= -1
+t10=1
+t11=t9 * t10
+local_data_int x30
+t12 = t11
+x30 = t12
+t13=false
+local_data_bool x40
+t14 = t13
+x40 = t14
+local_data_arrayint x50
+t15=Hola a todos los que est[a] haciendo un compilador nuevo
+
+local_data_String x510
+t16 = t15
+x510 = t16
+t17=false
+local_data_bool X123
+t18 = t17
+X123 = t18
+t19=4
+t20=45
+t21=t19<=t20
+f22=4.5
+f23=5.6
+t24=f22>f23
+t25=t21&&t24
+if t25 goto begin_if_1
+goto begin_end_if_1
+
+begin_if_1:
+global_data_int y
+t26=d
+t27 = t26
+x22 = t27
+t28=a
+local_data_String ch33
+t29 = t28
+ch33 = t29
+
+begin_else_1:
+local_data_int y
+t30=sdff
+local_data_String str2
+t31 = t30
+str2 = t31
+
+begin_end_else_1:
+
+begin_end_if_1:
+t32=1
+t33=2
+t34=t32*t33
+t35=2
+t36=2
+t37=t35+t36
+t38=5
+t39=t37+t38
+t40=2
+t41=1
+t42=t40*t41
+
+begin_for_1:
+dataint cant
+dataint cont
+dataint init
+dataint jump
+cant =t34
+cont = t39
+init =t39
+jump =t42
+print i
+t43 = t34 + t42
+t34 = 43
+if t34 != cont goto begin_for_1
+goto end_for_1
+end_for_1:
+print 'Hola mundo'
+t44= -1
+t45=5
+t46=t44 * t45
+retorno = t46
+
+begin_func_func2:
+Param b1
+Param i1
+t1=3
+retorno = t1
+
+begin_func_func3:
+local_data_String b1
+t1=b1
+retorno = t1
+
+begin_func_main: 
+local_data_float fl1
+f1=56.6
+local_data_float fl3
+t2 = f1
+fl3 = t2
+t3=4
+t4= -1
+t5=14
+t6=t4 * t5
+t7=t3+t6
+t8=7
+t9=t7+t8
+t10=15
+t11=t9+t10
+local_data_int in1
+t12 = t11
+in1 = t12
+f13=3.7
+f14=fl1
+f15=f13^f14
+f16=45.6
+f17=76.4
+f18=f16%f17
+f19=f15+f18
+local_data_float fl2
+t20 = f19
+fl2 = t20
+t21=10
+t22=10
+t23=d
+t24=3
+t25= call begin_func_func1, 2
+t26=t22*t25
+t27=t21+t26
+local_data_int arr
+t28 = t27
+arr = t28
+f29=4.5
+f30= -1
+f31=0.005
+f32=f30 * f31
+f33=f29%f32
+t34 = f33
+fl1 = t34
+f35=6.7
+f36=8.9
+t37=f35!=f36
+local_data_bool bl0
+t38 = t37
+bl0 = t38
+t39=in1
+t40=5
+t41=t39>=t40
+t42=false
+t43=true
+t44=5
+t45= call begin_func_func2, 2
+t46=56
+t47=t45>t46
+t48= !t47
+t49=t42&&t47
+t50=t41||t49
+local_data_bool bl1
+t51 = t50
+bl1 = t51
+t52=23
+retorno = t52

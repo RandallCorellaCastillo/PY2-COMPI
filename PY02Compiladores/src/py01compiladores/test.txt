@@ -1,86 +1,39 @@
-glob:char:pi;glob:int:pi;/*semantico*/
-glob:bool:pi;/*semantico*/
-glob:string:pi;/*semantico*/
 glob:char:pi;
-glob:int:pi = 'HOLA';
-glob:bool:pi = true;
-glob:string:pi = "dxcx";
-glob:int:pi = (randall || eandal && randall && (5+6 >6));
+glob:int:pi2;/*semantico*/
+glob:bool:pi3;/*semantico*/
+glob:string:pi4;/*semantico*/
+glob:float:pi6;/*semantico*/
 
-
-func:int:main_ 
-                loc:char:miChar='!';
-                loc:string:str1="Mi string 1";
-                loc:float:fl1;
-                loc:float:fl1=56.6; //semantico fl1
-                cos = "df";
-                cant = 56*5234;
-                cos = 5 < 7;
-                if(x22<=45&&var>5.6)_cos = 5 < 7;_
-                if(miFunc(randall, "a", randall[5]))_cos = 5 < 7;_ else _ cos = 12; _
-                loc:char:hola[12];
-                for:i:in:range(10,20,30)_
-                    println(i);
-                _
-                return;
-_
-func:int:fun1_ cos = "df"; return; _
-func:int:fun3_ cos = "df"; return;_
-
-glob:char:pi;
-glob:int:pi;/*semantico*/
-glob:bool:pi;/*semantico*/
-glob:string:pi;/*semantico*/
-glob:float:pi;/*semantico*/
-
-func:float:func1 _
+func:int:func1 _
 	param:char:x22;
 	param:char:x22; //semantico borrar parametro
-        param:int:x22; //semantico borrar parametro
-	loc:char:x22; /*semantico x22*/
-	if(!(x22<=45)&&var>5.6)_ //semantico x22, var
+	loc:float:x=-001;
+	//loc:char:x22='a'; /*semantico x22*/
+	loc:string:miChar='!';
+	loc:char:miChar2='!!'; //sintactico
+	loc:int:x30=-1;
+	loc:bool:x40=false;
+	loc:int:x50[1000];
+	loc:string:x510="Hola a todos los que est[a] haciendo un compilador nuevo\n";
+        loc:bool:X123=false;
+	if(4<=45&&4.5>5.6)_ //semantico x22, var
 		glob:int:y;
-		x22=10;
-		loc:char:ch33="";
-                return; //semantico
+		x22="d";
+		loc:char:ch33='a';
 	_else_
 		loc:int:y;//no error o no???
 		loc:string:str2="sdff";
-                break;
 	_
-        print(i);
-	for:i:in:range(5)_ print(i); _
-	return;//cambio en retorno genera semantico*/
+	for:i:in:range(1*2,2-2+5,2*1)_print(i);_
+	print("Hola mundo");
+	read(x22);
+	return: -5;//cambio en retorno genera semantico
 _
-
-
-func:bool:func2_
-        param:char:x22;
-        print(i);
-        while (!(x22<=45)&&var>5.6) _
-            // Cuerpo del bucle
-            println("El bucle 'while' está en ejecución.");
-
-            // Modificar la condición de alguna manera para que el bucle termine eventualmente
-            loc:bool:condition = pi; // Por ejemplo, establecer la condición como falsa para salir del bucle
-            return: hola;
-        _
-        switch(x) _
-            case 1:
-                // código para caso 1
-                break;
-            case 2:
-                // código para caso 2
-                break;
-            default:
-                // código para el caso predeterminado
-        _
-
-	return: -(-5.9);
-_
-
-
-func:string:func3_ //semantico string
+func:int:func2 _
+	param:bool:b1;
+	param:int:i1;
+	return:3; //generar error con -5.6 y con i1
+_func:string:func3_ //semantico string
 	loc:string:b1;
 	return:b1; 
 _
@@ -89,23 +42,17 @@ func:int:main_
 /*
 Comentario 1
 */
-	loc:char:miChar="!";
-	loc:char:miChar2="!!"; //sintactico
-	loc:string:str1="Mi string 1";
 	loc:float:fl1;
-	loc:float:fl1=56.6; //semantico fl1
-	loc:int:in1=fl1-- - -14/in1+++7-15; //semantico fl1, in1
-	loc:float:fl2=3.7^fl1+(45.6%76); //semantico literal 76
-        break;
-        read(randal);
+	loc:float:fl3=56.6; //semantico fl1
+	loc:int:in1=4 - -14 +7-15; //semantico fl1, in1
+
+	loc:float:fl2=3.7^fl1+(45.6%76.4); //semantico literal 76
 	
 //comentario 2
-	arr = 10 - arr[67] * func1 (hola, true, "hola mundo", 4.5, "a"); //semantico func1, retorno func1
-	fl1 = 4.5%miChar^-0.005; //semantico miChar
-	miFunc(miFunc(),"a"); //semantico miFunc, hola
+	loc:int:arr = 10 - 10 * func1("d", "3"); //semantico func1, retorno func1
+	fl1 = 4.5%-0.005; //semantico miChar
+	//miFunc1(miFunc(),'a'); //semantico miFunc, hola
 	loc:bool:bl0 = 6.7 != 8.9; //ok
-	loc:bool:bl1 = in1 >= fl1 || false && not(func2(3,in1) > 56); //semantico in1 >= fl1, func2
-        
-        randall++;
-	return : bl1; //semantico
+	loc:bool:bl1 = in1 >= 5 || false && !(func2(true, 5) > 56); //semantico in1 >= fl1, func2
+	return :23; //semantico
 _

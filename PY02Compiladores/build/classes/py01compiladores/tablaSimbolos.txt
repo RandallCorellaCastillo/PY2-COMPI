@@ -1,12 +1,24 @@
-Tabla de simbolo : globalTS : valores: variableGLob: pi:char
+Tabla de simbolo : globalTS : valores: variableGLob: pi:String
+variableGLob: pi2:int
+variableGLob: pi3:bool
+variableGLob: pi4:String
+variableGLob: pi6:float
+variableGLob: y:int
 
 Tabla de simbolo : func1 : valores: tipo:func:int
-parametro : x22:char
-parametro : x22:char
+parametro : x22:String
+parametro : x22:String
 variableLoc: x:float
+variableLoc: miChar:String
+variableLoc: miChar2:String
 variableLoc: x30:int
 variableLoc: x40:bool
 GlobArray: x50:int
+variableLoc: x510:String
+variableLoc: X123:bool
+variableLoc: ch33:String
+variableLoc: y:int
+variableLoc: str2:String
 
 Tabla de simbolo : func2 : valores: tipo:func:int
 parametro : b1:bool
@@ -14,7 +26,12 @@ parametro : i1:int
 
 Tabla de simbolo : main : valores: tipo:Main:int
 variableLoc: fl1:float
+variableLoc: fl3:float
+variableLoc: in1:int
+variableLoc: fl2:float
+variableLoc: arr:int
 variableLoc: bl0:bool
+variableLoc: bl1:bool
 
 Tabla de simbolo : func3 : valores: tipo:func:string
 variableLoc: b1:String

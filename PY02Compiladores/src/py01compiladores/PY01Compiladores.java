@@ -93,6 +93,24 @@ public class PY01Compiladores {
             System.err.println("Error al guardar la cadena en el archivo: " + e.getMessage());
         }
     }
+    public static void saveCod3D(String content, String ruta) throws IOException, Exception {
+        try {
+            // Crear un objeto FileWriter para escribir en el archivo
+            FileWriter archivoEscritura = new FileWriter(ruta);
+            // Crear un objeto BufferedWriter para escribir texto en el archivo
+            BufferedWriter escritor = new BufferedWriter(archivoEscritura);
+            // Escribir la cadena en el archivo
+            escritor.write(content);
+            // Cerrar el BufferedWriter para liberar recursos
+            escritor.close();
+
+            System.out.println("Cadena guardada en el archivo correctamente.");
+        } catch (IOException e) {
+            System.err.println("Error al guardar la cadena en el archivo: " + e.getMessage());
+        }
+    }
+    
+    
     
     public static void main(String[] args) throws SilentExit, Exception {
                 
