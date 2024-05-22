@@ -19,6 +19,7 @@ variableLoc: X123:bool
 variableLoc: ch33:String
 variableLoc: y:int
 variableLoc: str2:String
+variableLoc: x90:bool
 
 Tabla de simbolo : func2 : valores: tipo:func:int
 parametro : b1:bool

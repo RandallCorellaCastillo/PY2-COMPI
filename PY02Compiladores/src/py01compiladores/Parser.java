@@ -1424,7 +1424,7 @@ class CUP$Parser$actions {
                                             String[] info1 = e.toString().split(":");
                                             String[] info2 = t.toString().split(":");
                                             if(!validarOperacionIntFloat(info1[0], info2[0])) { 
-                                                System.out.println("Parser: Err: Los operandos deben ser el mismo tipo" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); System.exit(0); 
+                                                System.out.println("Parser: Err: Los operandos deben ser el mismo tipo" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));  
                                                 RESULT = "null:null";
                                             }
                                             else {
@@ -1455,7 +1455,7 @@ class CUP$Parser$actions {
                                                 String[] info1 = e.toString().split(":");
                                                 String[] info2 = t.toString().split(":");
                                                 if(!validarOperacionIntFloat(info1[0], info2[0])) { 
-                                                  System.out.println("Parser: Err: Los operandos deben ser el mismo tipo"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                  System.out.println("Parser: Err: Los operandos deben ser el mismo tipo"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                    RESULT = "null:null";}
                                                 else { 
                                                     String baseTemp = "t";
@@ -1502,7 +1502,7 @@ class CUP$Parser$actions {
                                         cod3D.append("\n" + miTempId + "=" + info1[1] + "*" + info2[1]);
 
                                         if(!validarOperacionIntFloat(info1[0], info2[0])) { 
-                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                              RESULT = "null:null";
                                         }
                                         else { RESULT = info1[0] +  ":" + miTempId;}
@@ -1530,7 +1530,7 @@ class CUP$Parser$actions {
                                         cod3D.append("\n" + miTempId + "=" + info1[1] + "/" + info2[1]);
 
                                         if(!validarOperacionIntFloat(info1[0], info2[0])) { 
-                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                             RESULT = "null:null";
                                         }
                                         else { RESULT = info1[0] +  ":" + miTempId;}
@@ -1558,7 +1558,7 @@ class CUP$Parser$actions {
                                         cod3D.append("\n" + miTempId + "=" + info1[1] + "^" + info2[1]);
 
                                         if(!validarOperacionIntFloat(info1[0], info2[0])) { 
-                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                             RESULT = "null:null";
                                         } 
                                         else { RESULT = info1[0] +  ":" + miTempId; }
@@ -1586,7 +1586,7 @@ class CUP$Parser$actions {
                                         cod3D.append("\n" + miTempId + "=" + info1[1] + "%" + info2[1]);
 
                                         if(!validarOperacionIntFloat(info1[0], info2[0])) {
-                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                            System.out.println("Parser: Err: Los operandos deben ser el mismo tipo" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                             RESULT = "null:null";
                                         }
                                         else { RESULT = info1[0] +  ":" + miTempId; }
@@ -1713,7 +1713,7 @@ class CUP$Parser$actions {
                                                                         RESULT = tipo +  ":" + miTempId;
                                                                     }
                                                                     else { System.out.println("Parser: Err: La variable no existe: " + i.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); 
-                                                                        System.exit(0);
+                                                                        
                                                                         RESULT = "null:null";} 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FACTOR",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1738,7 +1738,7 @@ class CUP$Parser$actions {
                                                                                 cod3D.append("\n" + miTempId3 + "=" + miTempId1 + "-" + miTempId2);
                                                                                 RESULT = tipo +  ":" + miTempId3;
                                                                            }
-                                                                           else { System.out.println("Parser: Err: La variable no existe: " + i.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                           else { System.out.println("Parser: Err: La variable no existe: " + i.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                              RESULT = "null:null";} 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FACTOR",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1764,7 +1764,7 @@ class CUP$Parser$actions {
                                                                             cod3D.append("\n" + miTempId3 + "=" + miTempId1 + "+" + miTempId2);
                                                                             RESULT = tipo +  ":" + miTempId3;
                                                                          }
-                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                    else { System.out.println("Parser: Err: La variable no existe: " + i.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                       RESULT = "null:null";} 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FACTOR",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1911,7 +1911,7 @@ class CUP$Parser$actions {
 		Object ID = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		 
                             if (!validarUsoVariable(ID.toString())) {
-                                System.out.println("Parser: Err : Variable " + ID.toString() + " no declarada." + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                System.out.println("Parser: Err : Variable " + ID.toString() + " no declarada." + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                             } 
                         
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FACTOR_INTEGER",38, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -1927,7 +1927,7 @@ class CUP$Parser$actions {
 		Object ID = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		 
                                 if (!validarUsoVariable(ID.toString())) {
-                                    System.out.println("Parser: Err : Variable " + ID.toString() + " no declarada." + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                    System.out.println("Parser: Err : Variable " + ID.toString() + " no declarada." + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                 } 
                             
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FACTOR_INTEGER",38, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -1943,7 +1943,7 @@ class CUP$Parser$actions {
 		Object ID = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		 
                                 if (!validarUsoVariable(ID.toString())) {
-                                    System.out.println("Parser: Err : Variable " + ID.toString() + " no declarada." + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                    System.out.println("Parser: Err : Variable " + ID.toString() + " no declarada." + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                 } 
                             
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FACTOR_INTEGER",38, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2030,7 +2030,7 @@ class CUP$Parser$actions {
                                                             RESULT = "bool:" + miTempId;
                                                         } 
                                                         else { 
-                                                            System.out.println("Parser: Err: El resultado de las operaciones debe ser entero o flotante : exp1: " + e1.toString() + " exp2: " + e2.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); System.exit(0);
+                                                            System.out.println("Parser: Err: El resultado de las operaciones debe ser entero o flotante : exp1: " + e1.toString() + " exp2: " + e2.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); 
                                                             RESULT = "null:null"; } 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("EXP_REL",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -2137,7 +2137,7 @@ class CUP$Parser$actions {
                                                         RESULT = "bool:" +  miTempId;
                                                     }
                                                     else {
-                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + e1.toString() + " oper2: " +  e2.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + e1.toString() + " oper2: " +  e2.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                         RESULT = "null:null";}  
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("EXP_LOG",21, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -2170,7 +2170,7 @@ class CUP$Parser$actions {
                                                         RESULT = "bool:" +  miTempId;
                                                     }
                                                     else {
-                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + e1.toString() + " oper2: " +  e2.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + e1.toString() + " oper2: " +  e2.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                         RESULT = "null:null";}  
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("EXP_LOG",21, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -2203,7 +2203,7 @@ class CUP$Parser$actions {
                                                         RESULT = "bool:" +  miTempId;
                                                     }
                                                     else {
-                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + e1.toString() + " oper2: " +  e2.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + e1.toString() + " oper2: " +  e2.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                         RESULT = "null:null";}  
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("EXP_LOG",21, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-5)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -2240,7 +2240,7 @@ class CUP$Parser$actions {
                                                             RESULT = "bool:" +  miTempId;
                                                         }
                                                         else {
-                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                             RESULT = "null:null";} 
                                                     } else {System.out.println("Parser: Err: La variable no existe. " + id.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); RESULT = "null:null";}
                                                     
@@ -2279,7 +2279,7 @@ class CUP$Parser$actions {
                                                             RESULT = "bool:" +  miTempId;
                                                         }
                                                         else {
-                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                             RESULT = "null:null";} 
                                                     } else {System.out.println("Parser: Err: La variable no existe: "+ id.toString()  + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); RESULT = "null:null";}
                                                     
@@ -2318,7 +2318,7 @@ class CUP$Parser$actions {
                                                             RESULT = "bool:" +  miTempId;
                                                         }
                                                         else {
-                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                             RESULT = "null:null";} 
                                                     } else {System.out.println("Parser: Err: La variable no existe. " + id.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); RESULT = "null:null";}
                                                     
@@ -2452,9 +2452,9 @@ class CUP$Parser$actions {
                                     String tipovar = getTipo(ID.toString());
                                     if (validarUsoVariable(ID.toString())) {
                                         if(!tipovar.equals(tipoAsig[0])){
-                                            System.out.println("Parser: Err : Asignacion: " + ID.toString() + " tipos no compatibles." + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                            System.out.println("Parser: Err : Asignacion: " + ID.toString() + " tipos no compatibles." + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                         }
-                                    } else {System.out.println("Parser: Err : Variable: " + ID.toString() + " no declarada."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);}
+                                    } else {System.out.println("Parser: Err : Variable: " + ID.toString() + " no declarada."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));}
                                     String[] info = v.toString().split(":");
                                     String baseTemp = "t";
                                     String miTempId = baseTemp + currentTemp++;
@@ -2481,7 +2481,7 @@ class CUP$Parser$actions {
 
                                                         cod3D.append("\nglobal_data_" + tglob.toString() + " " + ID.toString());
 
-                                                        } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);} 
+                                                        } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));} 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECL",24, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-5)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2508,9 +2508,9 @@ class CUP$Parser$actions {
                                                                             cod3D.append("\nglobal_data_" + tglob.toString() + " " + ID.toString());
                                                                             cod3D.append("\n" + ID.toString() + "=" + info[1]);
                                                                             }
-                                                                        else {System.out.println("Parser: Err : El valor asignado no es compatible con el tipo declarado de la variable: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);}
+                                                                        else {System.out.println("Parser: Err : El valor asignado no es compatible con el tipo declarado de la variable: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));}
 
-                                                                     } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);} 
+                                                                     } else {System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));} 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECL",24, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-7)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2532,11 +2532,11 @@ class CUP$Parser$actions {
                                                                                                 cod3D.append("\nglobal_data_array" + tglob.toString() + " " + ID.toString());
                                                                                             }  
                                                                                             else {
-                                                                                                System.out.println("Parser: Err : El array solo permite ser de tipo int o char" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                                                System.out.println("Parser: Err : El array solo permite ser de tipo int o char" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                                             }
                                                                                         } 
                                                                                         else {
-                                                                                            System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                                            System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                                         } 
                                                                                     
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECL",24, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-8)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2563,11 +2563,11 @@ class CUP$Parser$actions {
                                                                                                 cod3D.append("\nglobal_data_array " + tglob.toString() + " " + ID.toString());
                                                                                             }  
                                                                                             else {
-                                                                                                System.out.println("Parser: Err : El array solo permite ser de tipo int o char" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                                                System.out.println("Parser: Err : El array solo permite ser de tipo int o char" + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                                             }
                                                                                         } 
                                                                                         else {
-                                                                                            System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                                            System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                                         } 
                                                                                     
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECL",24, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-10)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2588,7 +2588,7 @@ class CUP$Parser$actions {
                                                           if(validarScopeVariables(ID.toString())){
                                                             TablaSimbolos.get(currentHash).add("variableLoc: " + ID.toString() + ":" + tloc.toString());
                                                             cod3D.append("\nlocal_data_" + tloc.toString() + " " + ID.toString());
-                                                          } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);}
+                                                          } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));}
                                                          
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECLOC",25, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-5)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -2620,8 +2620,8 @@ class CUP$Parser$actions {
                                                                             cod3D.append("\n" + ID.toString() + " = " + miTempId);
                                                                             }
 
-                                                                        else {System.out.println("Parser: Err : El valor asignado no es compatible con el tipo declarado de la variable: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);} 
-                                                                   } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);}
+                                                                        else {System.out.println("Parser: Err : El valor asignado no es compatible con el tipo declarado de la variable: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));} 
+                                                                   } else {System.out.println("Parser: Err : Variable ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));}
                                                                    
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECLOC",25, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-7)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -2644,11 +2644,11 @@ class CUP$Parser$actions {
                                                                                             cod3D.append("\nlocal_data_array" + tloc.toString() + " " + ID.toString());
                                                                                         }  
                                                                                         else {
-                                                                                            System.out.println("Parser: Err : El array solo permite ser de tipo int o char"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                                            System.out.println("Parser: Err : El array solo permite ser de tipo int o char"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                                         }
                                                                                     } 
                                                                                     else {
-                                                                                        System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                                        System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                                     } 
                                                                                 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECLOC",25, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-8)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2675,11 +2675,11 @@ class CUP$Parser$actions {
                                                                                             cod3D.append("\nlocal_data_array" + tloc.toString() + " " + ID.toString());
                                                                                         }  
                                                                                         else {
-                                                                                            System.out.println("Parser: Err : El array solo permite ser de tipo int o char"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                                            System.out.println("Parser: Err : El array solo permite ser de tipo int o char"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                                         }
                                                                                     } 
                                                                                     else {
-                                                                                        System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                                        System.out.println("Parser: Err : Variable global ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                                     } 
                                                                                 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("DECLOC",25, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-12)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2753,7 +2753,7 @@ class CUP$Parser$actions {
                                                         RESULT = "main";
                                                         cod3D.append("\n\nbegin_func_main: ");  
                                                         String tipo;
-                                                        if (flagMain){ System.out.println("Parser: err: dos o mas mains declarados."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);}
+                                                        if (flagMain){ System.out.println("Parser: err: dos o mas mains declarados."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));}
                                                         else{
                                                          flagMain = true;
                                                          tipo = "tipo:Main:int";
@@ -2784,7 +2784,7 @@ class CUP$Parser$actions {
                                                             fun.add(tipo);
                                                             TablaSimbolos.put(currentHash, fun);
                                                         } else {
-                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                         }
                                                     
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FUNCTION_STATEMENT",5, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2808,7 +2808,7 @@ class CUP$Parser$actions {
                                                             fun.add(tipo);
                                                             TablaSimbolos.put(currentHash, fun);
                                                         } else {
-                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                         }
                                                     
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FUNCTION_STATEMENT",5, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2832,7 +2832,7 @@ class CUP$Parser$actions {
                                                             fun.add(tipo);
                                                             TablaSimbolos.put(currentHash, fun);
                                                         } else {
-                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                         }
                                                         
                                                     
@@ -2857,7 +2857,7 @@ class CUP$Parser$actions {
                                                             fun.add(tipo);
                                                             TablaSimbolos.put(currentHash, fun);
                                                         } else {
-                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                         }
                                                     
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FUNCTION_STATEMENT",5, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2881,7 +2881,7 @@ class CUP$Parser$actions {
                                                             fun.add(tipo);
                                                             TablaSimbolos.put(currentHash, fun);
                                                         } else {
-                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            System.out.println("Parser: Err : Nombre de funcion ya declarada: " + ID.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                         }
                                                     
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("FUNCTION_STATEMENT",5, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2917,10 +2917,10 @@ class CUP$Parser$actions {
                                             if (validarFuncionExistente(ID.toString())) {
                                                 int parametrosEsperados = contar;
                                                 if (parametrosEsperados != 0) {
-                                                    System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros." + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                    System.out.println("Parser: Err : La funcion " + ID.toString() + " espera " + parametrosEsperados + " parametros." + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                 }
                                             } else {
-                                                System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                             }
                                         
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("INV_FUNC",27, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2942,7 +2942,7 @@ class CUP$Parser$actions {
                                                     int parametrosEsperados = contarParametros(info[0]);
                                                     int parametrosRecibidos = contar;
                                                     if (parametrosEsperados != parametrosRecibidos) {
-                                                        System.out.println("Parser: Err : La funcion " + info[0] + " espera " + parametrosEsperados + " parametros, pero se pasaron " + parametrosRecibidos + "."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                        System.out.println("Parser: Err : La funcion " + info[0] + " espera " + parametrosEsperados + " parametros, pero se pasaron " + parametrosRecibidos + "."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                     }
                                                  
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("INV_FUNC",27, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -2962,7 +2962,7 @@ class CUP$Parser$actions {
                                         if (validarFuncionExistente(ID.toString())) {
                                             identParam(ID.toString());
                                         } else {
-                                            System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                            System.out.println("Parser: Err : La funcion " + ID.toString() + " no esta definida."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                         }
                                     
                                     
@@ -2983,10 +2983,10 @@ class CUP$Parser$actions {
                                     //System.out.println(currentParam);
                                     if (currentParam < paramlist.size()){
                                         if( !(info[0].equals(paramlist.get(currentParam)))){
-                                        System.out.println("Parser: Err : Los parametros no son compatibles"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                        System.out.println("Parser: Err : Los parametros no son compatibles"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                         } 
                                         currentParam++;
-                                    } else{System.out.println("Parser: Err : Cantidad de parametros incompatible"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);}
+                                    } else{System.out.println("Parser: Err : Cantidad de parametros incompatible"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));}
                                 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("PARAMS",29, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -3166,10 +3166,11 @@ class CUP$Parser$actions {
 		String exp = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		
                                                 String[] info = exp.toString().split(":");
+                                                currentStructure = "if"; 
                                                 cod3D.append("\nif " + info[1] +  " goto begin_if_" + (currentIf));
                                                 cod3D.append("\ngoto " + "begin_end_if_" + (currentIf));
                                                 cod3D.append("\n\nbegin_if_" + currentIf++ +  ":"); 
-                                                 
+                                                //cod3D.append();
                                                 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("IF_STATEMENT",14, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -3188,7 +3189,10 @@ class CUP$Parser$actions {
           case 126: // ELSE_STATEMENT ::= ELSE_STATEMENT_CONTENT UNDERS LINE UNDERS 
             {
               String RESULT =null;
-		cod3D.append("\n\nbegin_end_else_" + (currentElse - 1) +  ":");
+		
+                                                                
+                                                                cod3D.append("\n\nbegin_end_else_" + (currentElse - 1) +  ":");
+                                                                
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("ELSE_STATEMENT",15, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -3207,6 +3211,7 @@ class CUP$Parser$actions {
             {
               String RESULT =null;
 		
+                            currentStructure = "else";
                             cod3D.append("\n\nbegin_else_" + currentElse++ +  ":"); 
                          
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("ELSE_STATEMENT_CONTENT",47, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -3217,8 +3222,7 @@ class CUP$Parser$actions {
           case 129: // WHILE_STATEMENT ::= WHILE_STATEMENT_DEF UNDERS LINE UNDERS 
             {
               String RESULT =null;
-		
-                                                            
+		                                                       
                                                             cod3D.append("\nif " + currentWhileCon + " goto begin_while_" + (currentWhile - 1));
                                                             cod3D.append("\n\nbegin_end_while_" + (currentWhile - 1) +  ":");
                                                           
@@ -3235,6 +3239,7 @@ class CUP$Parser$actions {
 		String exp = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		
                                                 String[] info = exp.toString().split(":");
+                                                currentStructure = "while";   
                                                 currentWhileCon = info[1];
                                                 cod3D.append("\nif " + info[1] +  " goto begin_while_" + (currentWhile));
                                                 cod3D.append("\ngoto " + "begin_end_while_" + (currentWhile));
@@ -3261,7 +3266,7 @@ class CUP$Parser$actions {
                                                                         cod3D.append("\ncont = 0");
 
                                                                     } else {
-                                                                        System.out.println("Parser: Err: El valor de los parametros del for deben ser enteros."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                        System.out.println("Parser: Err: El valor de los parametros del for deben ser enteros."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                     }
                                                                     RESULT = info[1] + ":null";
                                                                     
@@ -3291,7 +3296,7 @@ class CUP$Parser$actions {
                                                                         cod3D.append("\ncont = 0");
                                                                         cod3D.append("\ninit " + info2[1]);
                                                                     } else {
-                                                                        System.out.println("Parser: Err: El valor de los parametros del for deben ser enteros."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                        System.out.println("Parser: Err: El valor de los parametros del for deben ser enteros."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                     }
                                                                     RESULT = info1[1] + ":null";
                                                                     
@@ -3329,7 +3334,7 @@ class CUP$Parser$actions {
                                                                         cod3D.append("\ninit =" + info2[1]);
                                                                         cod3D.append("\njump =" + info3[1]);
                                                                     } else {
-                                                                        System.out.println("Parser: Err: El valor de los parametros del for deben ser enteros."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                        System.out.println("Parser: Err: El valor de los parametros del for deben ser enteros."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                                     }
                                                                     RESULT = info1[1] + ":" + info3[1];
                                                                     
@@ -3346,6 +3351,7 @@ class CUP$Parser$actions {
 		String fsd = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-3)).value;
 		
                                                             String[] info = fsd.toString().split(":");
+                                                            currentStructure = "for";
                                                             if(info[1].equals("null")) {
                                                                 cod3D.append("\nt" +  currentTemp++ + " = 1");
                                                                 cod3D.append("\nt" +  currentTemp++ + " = " + info[0] +  " + t" + (currentTemp - 2));
@@ -3371,6 +3377,7 @@ class CUP$Parser$actions {
             {
               String RESULT =null;
 		
+                                                                    currentStructure = "switch";
                                                                     cod3D.append("\n\nend_switch_" + (currentSwitch - 1) +  ":");
                                                                     
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("SWITCH_STATEMENT",33, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -3397,7 +3404,7 @@ class CUP$Parser$actions {
                                                                 cod3D.append("\nt" +  currentTemp++ + " = 0");
                                                                 cod3D.append("\nflag = " + "t" + (currentTemp - 1));
                                                             } else {
-                                                                System.out.println("Parser: Err: El resultado de la expresion o identificador de un switch debe ser entero"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                                System.out.println("Parser: Err: El resultado de la expresion o identificador de un switch debe ser entero"+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                                             }
                                                             
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("SWITCH_STATEMENT_DEF",50, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -3414,7 +3421,7 @@ class CUP$Parser$actions {
 		
                                             String[] info = csd.toString().split(":");
                                             if(info[0].equals("null")) {
-                                                System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                             } 
                                             
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("CASE_LIST",34, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -3431,7 +3438,7 @@ class CUP$Parser$actions {
 		
                                     String[] info = csd.toString().split(":");
                                     if(info[0].equals("null")) {
-                                        System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                        System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                     }
                                     
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("CASE_LIST",34, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -3502,7 +3509,7 @@ class CUP$Parser$actions {
                                             cod3D.append("\nflag" + " = t" + currentTemp++);
                                             RESULT = (currentSwitch - 1) +  ":" + (currentCase - 1);
                                         } else {
-                                            System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                            System.out.println("Parser: Err: El valor asignado del case debe ser un numero entero."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));
                                             RESULT = "null:null";
                                         }
                                         
@@ -3514,7 +3521,7 @@ class CUP$Parser$actions {
           case 144: // RETURN_STATEMENT ::= RETURN ENDLINE 
             {
               String RESULT =null;
-		 System.out.println("Parser: Err: El retorno no puede ser vacio."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); System.exit(0);
+		 System.out.println("Parser: Err: El retorno no puede ser vacio."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("RETURN_STATEMENT",41, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -3533,7 +3540,7 @@ class CUP$Parser$actions {
 
                                                 cod3D.append("\nretorno = " + info[1]);  
                                                 if(!retorno) { 
-                                                    System.out.println("Parser: Err: El tipo de retorno no es compatible con el tipo de la funcion."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); System.exit(0);
+                                                    System.out.println("Parser: Err: El tipo de retorno no es compatible con el tipo de la funcion."+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); 
                                                 }
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("RETURN_STATEMENT",41, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -3543,7 +3550,26 @@ class CUP$Parser$actions {
           case 146: // BREAK_STATEMENT ::= BREAK ENDLINE 
             {
               String RESULT =null;
-		 cod3D.append("\ngoto end_switch_" + (currentSwitch - 1));  
+		 
+                                        if (currentStructure == "switch"){
+                                            cod3D.append("\ngoto end_switch_" + (currentSwitch - 1));
+                                            //currentStructure = "";
+                                        }
+                                        if (currentStructure == "for"){
+                                            cod3D.append("\ngoto end_for_" + (currentFor - 1));
+                                            //currentStructure = "";
+                                        }
+                                        if (currentStructure == "while"){
+                                            cod3D.append("\ngoto begin_end_while_" + (currentWhile - 1));
+                                            //currentStructure = "";
+                                        }
+                                        if (currentStructure == "if"){
+                                            cod3D.append("\ngoto begin_end_if_" + (currentIf - 1));
+                                        }
+                                        if (currentStructure == "else"){
+                                            cod3D.append("\ngoto begin_end_else_" + (currentElse - 1));
+                                        }
+                                  
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("BREAK_STATEMENT",43, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
