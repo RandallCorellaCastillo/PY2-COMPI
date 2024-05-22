@@ -3,6 +3,7 @@ glob:int:pi2;/*semantico*/
 glob:bool:pi3;/*semantico*/
 glob:string:pi4;/*semantico*/
 glob:float:pi6;/*semantico*/
+//glob:int:pi = (randall || eandal && randall && (5+6 >6));
 
 func:int:func1 _
 	param:char:x22;

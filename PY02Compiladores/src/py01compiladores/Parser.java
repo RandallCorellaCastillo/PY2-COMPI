@@ -933,6 +933,7 @@ currentSymbol = lex.next_token();
 
     public boolean validarScopeVariables (String id) throws Exception {
         ArrayList<String> ScopeVariable = TablaSimbolos.get(currentHash);
+        if(ScopeVariable == null) {return false;}
         for (String elemento : ScopeVariable) {
             String[] partes = elemento.split(":");
             String idComp = partes[1].trim();
@@ -944,6 +945,7 @@ currentSymbol = lex.next_token();
 
     public boolean validarScopeVariablesGlobales (String id) throws Exception {
         ArrayList<String> ScopeVariableGlobales = TablaSimbolos.get(globalHash);
+        if(ScopeVariableGlobales == null) {return false;}
         for (String elemento : ScopeVariableGlobales) {
             String[] partes = elemento.split(":");
             String idComp = partes[1].trim();
@@ -2128,7 +2130,7 @@ class CUP$Parser$actions {
 
                                                     String baseTemp = "t";
                                                     String miTempId = baseTemp + currentTemp++;
-
+                                                    
                                                     cod3D.append("\n" + miTempId + "=" + info1[1] +  info3[1] + info2[1] );
 
                                                     if(info1[0].equals(info2[0])) {
@@ -2158,7 +2160,7 @@ class CUP$Parser$actions {
                                                     String[] info1 = e1.toString().split(":");
                                                     String[] info2 = e2.toString().split(":");
                                                     String[] info3 = op1.toString().split(":");
-
+                                                    
                                                     String baseTemp = "t";
                                                     String miTempId = baseTemp + currentTemp++;
 
@@ -2220,22 +2222,28 @@ class CUP$Parser$actions {
 		int eleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int eright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		String e = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		 String comp = getTipo(id.toString()); 
-                                                    String[] info1 = id.toString().split(":");
+		 
+                                                    String comp = getTipo(id.toString()); 
+                                                    //String[] info1 = id.toString().split(":");
                                                     String[] info2 = e.toString().split(":");
                                                     String[] info3 = op1.toString().split(":");
 
-                                                    String baseTemp = "t";
-                                                    String miTempId = baseTemp + currentTemp++;
+                                                    boolean val1 = validarUsoVariable(id.toString());
 
-                                                    cod3D.append("\n" + miTempId + "=" + info1[1] +  info3[1] + info2[1] );
-
-                                                    if(info1[0].equals(info2[0])) {
-                                                        RESULT = "bool:" +  miTempId;
-                                                    }
-                                                    else {
-                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + info1[0] + " oper2: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
-                                                        RESULT = "null:null";}  
+                                                    String existeVariable = "";
+                                                    if(val1) {
+                                                        String baseTemp = "t";
+                                                        String miTempId = baseTemp + currentTemp++;
+                                                        cod3D.append("\n" + miTempId + "=" + id.toString() +  info3[1] + info2[1] );
+                                                        String comparador = getTipo(id.toString());
+                                                        if(comparador.equals(info2[0])) {
+                                                            RESULT = "bool:" +  miTempId;
+                                                        }
+                                                        else {
+                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            RESULT = "null:null";} 
+                                                    } else {System.out.println("Parser: Err: La variable no existe. " + id.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); RESULT = "null:null";}
+                                                    
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("EXP_LOG",21, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2253,22 +2261,28 @@ class CUP$Parser$actions {
 		int eleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).left;
 		int eright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).right;
 		String e = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
-		 String comp = getTipo(id.toString()); 
-                                                    String[] info1 = id.toString().split(":");
+		 
+                                                    String comp = getTipo(id.toString()); 
+                                                    //String[] info1 = id.toString().split(":");
                                                     String[] info2 = e.toString().split(":");
                                                     String[] info3 = op1.toString().split(":");
 
-                                                    String baseTemp = "t";
-                                                    String miTempId = baseTemp + currentTemp++;
+                                                    boolean val1 = validarUsoVariable(id.toString());
 
-                                                    cod3D.append("\n" + miTempId + "=" + info1[1] +  info3[1] + info2[1] );
-
-                                                    if(info1[0].equals(info2[0])) {
-                                                        RESULT = "bool:" +  miTempId;
-                                                    }
-                                                    else {
-                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + info1[0] + " oper2: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1) );System.exit(0);
-                                                        RESULT = "null:null";}  
+                                                    String existeVariable = "";
+                                                    if(val1) {
+                                                        String baseTemp = "t";
+                                                        String miTempId = baseTemp + currentTemp++;
+                                                        cod3D.append("\n" + miTempId + "=" + id.toString() +  info3[1] + info2[1] );
+                                                        String comparador = getTipo(id.toString());
+                                                        if(comparador.equals(info2[0])) {
+                                                            RESULT = "bool:" +  miTempId;
+                                                        }
+                                                        else {
+                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            RESULT = "null:null";} 
+                                                    } else {System.out.println("Parser: Err: La variable no existe: "+ id.toString()  + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); RESULT = "null:null";}
+                                                    
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("EXP_LOG",21, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -2287,21 +2301,27 @@ class CUP$Parser$actions {
 		int eright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).right;
 		String e = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		 
-                                                    String[] info1 = id.toString().split(":");
+                                                    String comp = getTipo(id.toString()); 
+                                                    //String[] info1 = id.toString().split(":");
                                                     String[] info2 = e.toString().split(":");
                                                     String[] info3 = op1.toString().split(":");
 
-                                                    String baseTemp = "t";
-                                                    String miTempId = baseTemp + currentTemp++;
+                                                    boolean val1 = validarUsoVariable(id.toString());
 
-                                                    cod3D.append("\n" + miTempId + "=!" + info1[1] +  info3[1] + info2[1] );
-
-                                                    if(info1[0].equals(info2[0])) {
-                                                        RESULT = "bool:" +  miTempId;
-                                                    }
-                                                    else {
-                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + info1[0] + " oper2: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
-                                                        RESULT = "null:null";}  
+                                                    String existeVariable = "";
+                                                    if(val1) {
+                                                        String baseTemp = "t";
+                                                        String miTempId = baseTemp + currentTemp++;
+                                                        cod3D.append("\n" + miTempId + "=" + id.toString() +  info3[1] + info2[1] );
+                                                        String comparador = getTipo(id.toString());
+                                                        if(comparador.equals(info2[0])) {
+                                                            RESULT = "bool:" +  miTempId;
+                                                        }
+                                                        else {
+                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            RESULT = "null:null";} 
+                                                    } else {System.out.println("Parser: Err: La variable no existe. " + id.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); RESULT = "null:null";}
+                                                    
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("EXP_LOG",21, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-5)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

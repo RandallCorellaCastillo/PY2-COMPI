@@ -88,6 +88,7 @@ parser code {:
 
     public boolean validarScopeVariables (String id) throws Exception {
         ArrayList<String> ScopeVariable = TablaSimbolos.get(currentHash);
+        if(ScopeVariable == null) {return false;}
         for (String elemento : ScopeVariable) {
             String[] partes = elemento.split(":");
             String idComp = partes[1].trim();
@@ -99,6 +100,7 @@ parser code {:
 
     public boolean validarScopeVariablesGlobales (String id) throws Exception {
         ArrayList<String> ScopeVariableGlobales = TablaSimbolos.get(globalHash);
+        if(ScopeVariableGlobales == null) {return false;}
         for (String elemento : ScopeVariableGlobales) {
             String[] partes = elemento.split(":");
             String idComp = partes[1].trim();
@@ -626,7 +628,7 @@ EXP_LOG ::= OPER_LOG:op1 {:RESULT = op1;:}
 
                                                     String baseTemp = "t";
                                                     String miTempId = baseTemp + currentTemp++;
-
+                                                    
                                                     cod3D.append("\n" + miTempId + "=" + info1[1] +  info3[1] + info2[1] );
 
                                                     if(info1[0].equals(info2[0])) {
@@ -640,7 +642,7 @@ EXP_LOG ::= OPER_LOG:op1 {:RESULT = op1;:}
                                                     String[] info1 = e1.toString().split(":");
                                                     String[] info2 = e2.toString().split(":");
                                                     String[] info3 = op1.toString().split(":");
-
+                                                    
                                                     String baseTemp = "t";
                                                     String miTempId = baseTemp + currentTemp++;
 
@@ -670,56 +672,75 @@ EXP_LOG ::= OPER_LOG:op1 {:RESULT = op1;:}
                                                         System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + e1.toString() + " oper2: " +  e2.toString()+ ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
                                                         RESULT = "null:null";}  :}  
 
-          | IDENTIFIER:id OPERA_LOG:op1 EXP_REL_LOG:e {: String comp = getTipo(id.toString()); 
-                                                    String[] info1 = id.toString().split(":");
+          | IDENTIFIER:id OPERA_LOG:op1 EXP_REL_LOG:e {: 
+                                                    String comp = getTipo(id.toString()); 
+                                                    //String[] info1 = id.toString().split(":");
                                                     String[] info2 = e.toString().split(":");
                                                     String[] info3 = op1.toString().split(":");
 
-                                                    String baseTemp = "t";
-                                                    String miTempId = baseTemp + currentTemp++;
+                                                    boolean val1 = validarUsoVariable(id.toString());
 
-                                                    cod3D.append("\n" + miTempId + "=" + info1[1] +  info3[1] + info2[1] );
+                                                    String existeVariable = "";
+                                                    if(val1) {
+                                                        String baseTemp = "t";
+                                                        String miTempId = baseTemp + currentTemp++;
+                                                        cod3D.append("\n" + miTempId + "=" + id.toString() +  info3[1] + info2[1] );
+                                                        String comparador = getTipo(id.toString());
+                                                        if(comparador.equals(info2[0])) {
+                                                            RESULT = "bool:" +  miTempId;
+                                                        }
+                                                        else {
+                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            RESULT = "null:null";} 
+                                                    } else {System.out.println("Parser: Err: La variable no existe. " + id.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); RESULT = "null:null";}
+                                                    :}  
+                                                    
 
-                                                    if(info1[0].equals(info2[0])) {
-                                                        RESULT = "bool:" +  miTempId;
-                                                    }
-                                                    else {
-                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + info1[0] + " oper2: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
-                                                        RESULT = "null:null";}  :}  
-
-          | PARENTA IDENTIFIER:id  OPERA_LOG:op1 EXP_REL_LOG:e PARENTC   {: String comp = getTipo(id.toString()); 
-                                                    String[] info1 = id.toString().split(":");
+          | PARENTA IDENTIFIER:id  OPERA_LOG:op1 EXP_REL_LOG:e PARENTC   {: 
+                                                    String comp = getTipo(id.toString()); 
+                                                    //String[] info1 = id.toString().split(":");
                                                     String[] info2 = e.toString().split(":");
                                                     String[] info3 = op1.toString().split(":");
 
-                                                    String baseTemp = "t";
-                                                    String miTempId = baseTemp + currentTemp++;
+                                                    boolean val1 = validarUsoVariable(id.toString());
 
-                                                    cod3D.append("\n" + miTempId + "=" + info1[1] +  info3[1] + info2[1] );
-
-                                                    if(info1[0].equals(info2[0])) {
-                                                        RESULT = "bool:" +  miTempId;
-                                                    }
-                                                    else {
-                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + info1[0] + " oper2: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1) );System.exit(0);
-                                                        RESULT = "null:null";}  :}  
+                                                    String existeVariable = "";
+                                                    if(val1) {
+                                                        String baseTemp = "t";
+                                                        String miTempId = baseTemp + currentTemp++;
+                                                        cod3D.append("\n" + miTempId + "=" + id.toString() +  info3[1] + info2[1] );
+                                                        String comparador = getTipo(id.toString());
+                                                        if(comparador.equals(info2[0])) {
+                                                            RESULT = "bool:" +  miTempId;
+                                                        }
+                                                        else {
+                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            RESULT = "null:null";} 
+                                                    } else {System.out.println("Parser: Err: La variable no existe: "+ id.toString()  + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); RESULT = "null:null";}
+                                                    :}  
 
           | NOT PARENTA IDENTIFIER:id  OPERA_LOG:op1 EXP_REL_LOG:e PARENTC  {: 
-                                                    String[] info1 = id.toString().split(":");
+                                                    String comp = getTipo(id.toString()); 
+                                                    //String[] info1 = id.toString().split(":");
                                                     String[] info2 = e.toString().split(":");
                                                     String[] info3 = op1.toString().split(":");
 
-                                                    String baseTemp = "t";
-                                                    String miTempId = baseTemp + currentTemp++;
+                                                    boolean val1 = validarUsoVariable(id.toString());
 
-                                                    cod3D.append("\n" + miTempId + "=!" + info1[1] +  info3[1] + info2[1] );
-
-                                                    if(info1[0].equals(info2[0])) {
-                                                        RESULT = "bool:" +  miTempId;
-                                                    }
-                                                    else {
-                                                        System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " + info1[0] + " oper2: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
-                                                        RESULT = "null:null";}  :} ;
+                                                    String existeVariable = "";
+                                                    if(val1) {
+                                                        String baseTemp = "t";
+                                                        String miTempId = baseTemp + currentTemp++;
+                                                        cod3D.append("\n" + miTempId + "=" + id.toString() +  info3[1] + info2[1] );
+                                                        String comparador = getTipo(id.toString());
+                                                        if(comparador.equals(info2[0])) {
+                                                            RESULT = "bool:" +  miTempId;
+                                                        }
+                                                        else {
+                                                            System.out.println("Parser: Err: Los operandos debe ser booleanos: oper1: " +  info2[0] + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1));System.exit(0);
+                                                            RESULT = "null:null";} 
+                                                    } else {System.out.println("Parser: Err: La variable no existe. " + id.toString() + ": Linea : " + (currentSymbol.left + 1) +": Columna : " + (currentSymbol.right + 1)); RESULT = "null:null";}
+                                                    :} ;
 //operando logico.
 OPER_LOG ::= EXP_ARIT:e {: 
                         String[] info = e.toString().split(":");
